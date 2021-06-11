@@ -80,6 +80,17 @@ let DhallMatrix =
 
 let Event = < push | release | pull_request >
 
+let ShellEnv =
+      { Type =
+          { haskell_ci_cabal_args : Optional Text
+          , haskell_ci_stack_args : Optional Text
+          }
+      , default =
+          { haskell_ci_cabal_args = None Text
+          , haskell_ci_stack_args = None Text
+          }
+      }
+
 let CI =
       { Type =
           { name : Text
@@ -89,6 +100,7 @@ let CI =
                   { runs-on : Text
                   , steps : List BuildStep
                   , strategy : Optional Matrix
+                  , env : ShellEnv.Type
                   }
               }
           }
@@ -228,13 +240,13 @@ let cabalUpdate =
       BuildStep.Name
         { name = "Update Hackage repository", run = "cabal update" }
 
-let cabalFreeze = BuildStep.Name { name = "freeze", run = "cabal freeze" }
+let cabalFreeze = BuildStep.Name { name = "freeze", run = "cabal freeze $haskell_ci_cabal_args" }
 
 let cabalDeps =
       BuildStep.Name
         { name = "Install dependencies"
         , run =
-            "cabal build all --enable-tests --enable-benchmarks --only-dependencies"
+            "cabal build all --enable-tests --enable-benchmarks --only-dependencies $haskell_ci_cabal_args"
         }
 
 let cmdWithFlags =
@@ -250,7 +262,7 @@ let cabalWithFlags = cmdWithFlags "cabal"
 
 let cabalBuildWithFlags = cabalWithFlags "build all"
 
-let cabalBuild = cabalBuildWithFlags [ "--enable-tests", "--enable-benchmarks" ]
+let cabalBuild = cabalBuildWithFlags [ "--enable-tests", "--enable-benchmarks", "$haskell_ci_cabal_args" ]
 
 let stackWithFlags = cmdWithFlags "stack"
 
@@ -258,17 +270,17 @@ let stackBuildWithFlags = stackWithFlags "build"
 
 let stackBuild =
       stackBuildWithFlags
-        [ "--bench", "--test", "--no-run-tests", "--no-run-benchmarks" ]
+        [ "--bench", "--test", "--no-run-tests", "--no-run-benchmarks", "$haskell_ci_stack_args" ]
 
-let cabalTest = cabalWithFlags "test all" ([ "--enable-tests" ] : List Text)
+let cabalTest = cabalWithFlags "test all" ([ "--enable-tests", "$haskell_ci_cabal_args" ] : List Text)
 
-let stackTest = stackWithFlags "test" ([] : List Text)
+let stackTest = stackWithFlags "test" (["$haskell_ci_stack_args"] : List Text)
 
-let cabalTestProfiling = cabalWithFlags "test all" [ "--enable-profiling" ]
+let cabalTestProfiling = cabalWithFlags "test all" [ "--enable-profiling", "$haskell_ci_cabal_args" ]
 
-let cabalTestCoverage = cabalWithFlags "test all" [ "--enable-coverage" ]
+let cabalTestCoverage = cabalWithFlags "test all" [ "--enable-coverage", "$haskell_ci_cabal_args" ]
 
-let cabalDoc = cabalWithFlags "haddock all" ([] : List Text)
+let cabalDoc = cabalWithFlags "haddock all" (["$haskell_ci_cabal_args"] : List Text)
 
 let generalCi =
       λ(sts : List BuildStep) →
@@ -279,6 +291,7 @@ let generalCi =
             { runs-on = printOS OS.Ubuntu
             , steps = sts
             , strategy = mapOptional DhallMatrix.Type Matrix mkMatrix mat
+            , env = ShellEnv.default
             }
           }
         : CI.Type
@@ -318,6 +331,7 @@ let defaultCi = generalCi defaultSteps (None DhallMatrix.Type) : CI.Type
 in  { VersionInfo
     , BuildStep
     , Matrix
+    , ShellEnv
     , CI
     , GHC
     , Cabal
