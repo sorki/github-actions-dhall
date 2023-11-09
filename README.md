@@ -1,10 +1,13 @@
 # github-actions-dhall
 
-This is a demonstration using Dhall to generate YAML for
-github actions.
+Use Dhall to generate YAML for Github Actions for building Haskell projects.
 
-github-actions-dhall is
-[self-hosting](https://github.com/vmchale/github-actions-dhall/blob/master/self-ci.dhall).
+Fork based on https://github.com/vmchale/github-actions-dhall focusing
+mainly on `haskell-ci.dhall`.
+
+
+`github-actions-dhall` is
+[self-hosting](https://github.com/sorki/github-actions-dhall/blob/main/self-ci.dhall).
 
 ## Example
 
@@ -13,17 +16,17 @@ github-actions-dhall is
 Store the following in `example.dhall`:
 
 ```dhall
-let haskellCi = https://raw.githubusercontent.com/vmchale/github-actions-dhall/master/haskell-ci.dhall
+let haskellCi = https://raw.githubusercontent.com/sorki/github-actions-dhall/main/haskell-ci.dhall
 
 in    haskellCi.generalCi
         haskellCi.matrixSteps
         ( Some
             { ghc =
-              [ haskellCi.GHC.GHC8101
-              , haskellCi.GHC.GHC883
-              , haskellCi.GHC.GHC865
+              [ haskellCi.GHC.GHC963
+              , haskellCi.GHC.GHC947
+              , haskellCi.GHC.GHC927
               ]
-            , cabal = [ haskellCi.Cabal.Cabal32 ]
+            , cabal = [ haskellCi.Cabal.Cabal310 ]
             }
         )
     : haskellCi.CI.Type
@@ -34,41 +37,48 @@ Then, generate YAML with `dhall-to-yaml --file example.dhall`
 ```yaml
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: "actions/checkout@v1"
+      - uses: "actions/checkout@v4"
       - id: setup-haskell-cabal
-        uses: "actions/setup-haskell@v1.1"
+        uses: "haskell-actions/setup@v2"
         with:
           cabal-version: "${{ matrix.cabal }}"
+          enable-stack: false
           ghc-version: "${{ matrix.ghc }}"
-      - uses: "actions/cache@v1"
-        with:
-          key: "${{ runner.os }}-${{ matrix.ghc }}-cabal"
-          path: "${{ steps.setup-haskell-cabal.outputs.cabal-store }}"
-      - name: Install dependencies
+      - name: Update Hackage repository
+        run: cabal update
+      - name: cabal.project.local.ci
         run: |
-          cabal update
-          cabal build --enable-tests --enable-benchmarks --only-dependencies
-      - name: build
-        run: cabal build --enable-tests --enable-benchmarks
-      - name: test
-        run: cabal test
-      - name: haddock
-        run: cabal haddock
+          if [ -e cabal.project.local.ci ]; then
+            cp cabal.project.local.ci cabal.project.local
+          fi
+      - name: freeze
+        run: cabal freeze --enable-tests --enable-benchmarks
+      - uses: "actions/cache@v3"
+        with:
+          key: "${{ runner.os }}-${{ matrix.ghc }}-cabal-${{ hashFiles('cabal.project.freeze') }}"
+          path: |
+            ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
+            dist-newstyle
+      - name: Install dependencies
+        run: cabal build all --enable-tests --enable-benchmarks --only-dependencies
+      - name: build all
+        run: cabal build all --enable-tests --enable-benchmarks
+      - name: test all
+        run: cabal test all --enable-tests
+      - name: haddock all
+        run: cabal haddock all 
     strategy:
       matrix:
         cabal:
-          - '3.2'
+          - '3.10'
         ghc:
-          - '8.10.1'
-          - '8.8.3'
-          - '8.6.5'
+          - '9.6.3'
+          - '9.4.7'
+          - '9.2.7'
 name: Haskell CI
 on:
   - push
+  - pull_request
 ```
-
-Have a look at
-[hlint-lib](https://github.com/vmchale/hlint-lib/blob/master/self-ci.dhall) for
-a more "organic" example.
