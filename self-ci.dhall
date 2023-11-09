@@ -6,7 +6,7 @@ in      dhallCi.dhallSteps
               [ "haskell-ci.dhall"
               , "self-ci.dhall"
               ]
-          , dhallCi.checkDhallYaml [ "self-ci.dhall", "example.dhall" ]
+          , dhallCi.checkDhallYaml [ "self-ci.dhall", "ci.dhall" ]
           ]
       ⫽ { on = [ dhallCi.Event.push ] }
     : dhallCi.CI

@@ -13,7 +13,7 @@ mainly on `haskell-ci.dhall`.
 
 ### Haskell
 
-Store the following in `example.dhall`:
+Store the following in `ci.dhall` (or use the one provided in this repository):
 
 ```dhall
 let haskellCi = https://raw.githubusercontent.com/sorki/github-actions-dhall/main/haskell-ci.dhall
@@ -32,7 +32,7 @@ in    haskellCi.generalCi
     : haskellCi.CI.Type
 ```
 
-Then, generate YAML with `dhall-to-yaml --file example.dhall`
+Then, generate YAML with `dhall-to-yaml --file example.dhall`, see also [`ci.sh`](./ci.sh)
 
 ```yaml
 jobs:
