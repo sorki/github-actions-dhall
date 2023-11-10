@@ -1,6 +1,6 @@
 let Prelude =
-      https://prelude.dhall-lang.org/v23.0.0/package.dhall
-        sha256:397ef8d5cf55e576eab4359898f61a4e50058982aaace86268c62418d3027871
+      https://prelude.dhall-lang.org/v22.0.0/package.dhall
+        sha256:1c7622fdc868fe3a23462df3e6f533e50fdc12ecf3b42c0bb45c328ec8c4293e
 
 -- See https://github.com/haskell-actions/setup/blob/main/src/versions.json
 let GHC =
