@@ -32,53 +32,53 @@ in    haskellCi.generalCi
     : haskellCi.CI.Type
 ```
 
-Then, generate YAML with `dhall-to-yaml --file example.dhall`, see also [`ci.sh`](./ci.sh)
+Then, generate YAML with `dhall-to-yaml-ng --file example.dhall`, see also [`ci.sh`](./ci.sh)
 
 ```yaml
 jobs:
   build:
-    runs-on: ubuntu-latest
+    "runs-on": "ubuntu-latest"
     steps:
-      - uses: "actions/checkout@v4"
-      - id: setup-haskell-cabal
-        uses: "haskell-actions/setup@v2"
-        with:
-          cabal-version: "${{ matrix.cabal }}"
-          enable-stack: false
-          ghc-version: "${{ matrix.ghc }}"
-      - name: Update Hackage repository
-        run: cabal update
-      - name: cabal.project.local.ci
-        run: |
-          if [ -e cabal.project.local.ci ]; then
-            cp cabal.project.local.ci cabal.project.local
-          fi
-      - name: freeze
-        run: cabal freeze --enable-tests --enable-benchmarks
-      - uses: "actions/cache@v3"
-        with:
-          key: "${{ runner.os }}-${{ matrix.ghc }}-cabal-${{ hashFiles('cabal.project.freeze') }}"
-          path: |
-            ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
-            dist-newstyle
-      - name: Install dependencies
-        run: cabal build all --enable-tests --enable-benchmarks --only-dependencies
-      - name: build all
-        run: cabal build all --enable-tests --enable-benchmarks
-      - name: test all
-        run: cabal test all --enable-tests
-      - name: haddock
-        run: cabal haddock 
+    - uses: "actions/checkout@v4"
+    - id: "setup-haskell-cabal"
+      uses: "haskell-actions/setup@v2"
+      with:
+        "cabal-version": "${{ matrix.cabal }}"
+        "enable-stack": false
+        "ghc-version": "${{ matrix.ghc }}"
+    - name: Update Hackage repository
+      run: cabal update
+    - name: cabal.project.local.ci
+      run: |
+        if [ -e cabal.project.local.ci ]; then
+          cp cabal.project.local.ci cabal.project.local
+        fi
+    - name: freeze
+      run: "cabal freeze --enable-tests --enable-benchmarks"
+    - uses: "actions/cache@v3"
+      with:
+        key: "${{ runner.os }}-${{ matrix.ghc }}-cabal-${{ hashFiles('cabal.project.freeze') }}"
+        path: |
+          ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
+          dist-newstyle
+    - name: Install dependencies
+      run: "cabal build all --enable-tests --enable-benchmarks --only-dependencies"
+    - name: build all
+      run: "cabal build all --enable-tests --enable-benchmarks"
+    - name: test all
+      run: "cabal test all --enable-tests"
+    - name: haddock
+      run: cabal haddock
     strategy:
       matrix:
         cabal:
-          - '3.10'
+        - '3.10'
         ghc:
-          - '9.6.3'
-          - '9.4.7'
-          - '9.2.7'
+        - '9.6.3'
+        - '9.4.7'
+        - '9.2.7'
 name: Haskell CI
-on:
-  - push
-  - pull_request
+'on':
+- push
+- pull_request
 ```
