@@ -1,14 +1,6 @@
-let map =
-      https://raw.githubusercontent.com/dhall-lang/dhall-lang/9f259cd68870b912fbf2f2a08cd63dc3ccba9dc3/Prelude/List/map
-        sha256:dd845ffb4568d40327f2a817eb42d1c6138b929ca758d50bc33112ef3c885680
-
-let mapOptional =
-      https://raw.githubusercontent.com/dhall-lang/dhall-lang/87993319329f3c00920d6e882365276925a4aa6a/Prelude/Optional/map
-        sha256:501534192d988218d43261c299cc1d1e0b13d25df388937add784778ab0054fa
-
-let concatSep =
-      https://raw.githubusercontent.com/dhall-lang/dhall-lang/9f259cd68870b912fbf2f2a08cd63dc3ccba9dc3/Prelude/Text/concatSep
-        sha256:e4401d69918c61b92a4c0288f7d60a6560ca99726138ed8ebc58dca2cd205e58
+let Prelude =
+      https://prelude.dhall-lang.org/v23.0.0/package.dhall
+        sha256:397ef8d5cf55e576eab4359898f61a4e50058982aaace86268c62418d3027871
 
 -- See https://github.com/haskell-actions/setup/blob/main/src/versions.json
 let GHC =
@@ -218,8 +210,8 @@ let printEnv =
 
 let printMatrix =
       λ(v : DhallMatrix.Type) →
-        { ghc = map GHC Text printGhc v.ghc
-        , cabal = map Cabal Text printCabal v.cabal
+        { ghc = Prelude.List.map GHC Text printGhc v.ghc
+        , cabal = Prelude.List.map Cabal Text printCabal v.cabal
         }
 
 let cache =
@@ -290,7 +282,7 @@ let mkMatrix = λ(st : DhallMatrix.Type) → { matrix = printMatrix st } : Matri
 
 let hlintDirs =
       λ(dirs : List Text) →
-        let bashDirs = concatSep " " dirs
+        let bashDirs = Prelude.Text.concatSep " " dirs
 
         in  BuildStep.Name
               { name = "Run hlint"
@@ -332,7 +324,7 @@ let cmdWithFlags =
       λ(cmd : Text) →
       λ(subcommand : Text) →
       λ(flags : List Text) →
-        let flagStr = concatSep " " flags
+        let flagStr = Prelude.Text.concatSep " " flags
 
         in  BuildStep.Name
               { name = subcommand, run = "${cmd} ${subcommand} ${flagStr}" }
@@ -369,7 +361,7 @@ let generalCi =
             =
             { runs-on = printOS OS.Ubuntu
             , steps = sts
-            , strategy = mapOptional DhallMatrix.Type Matrix mkMatrix mat
+            , strategy = Prelude.Optional.map DhallMatrix.Type Matrix mkMatrix mat
             }
           }
         : CI.Type
