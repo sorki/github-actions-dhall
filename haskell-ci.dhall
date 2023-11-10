@@ -41,97 +41,6 @@ let GHC =
       | GHC981
       >
 
-let Cabal =
-      < Cabal310
-      | Cabal38
-      | Cabal36
-      | Cabal34
-      | Cabal32
-      | Cabal30
-      | Cabal24
-      | Cabal22
-      | Cabal20
-      >
-
-let OS =
-      < Ubuntu
-      | Ubuntu2204
-      | Ubuntu2004
-      | Ubuntu1804
-      | Ubuntu1604
-      | MacOS
-      | Windows
-      >
-
-let VersionInfo =
-      { Type =
-          { ghc-version : Optional Text
-          , cabal-version : Optional Text
-          , stack-version : Optional Text
-          , enable-stack : Optional Bool
-          , stack-no-global : Optional Bool
-          , stack-setup-ghc : Optional Bool
-          }
-      , default =
-        { ghc-version = Some "9.4.7"
-        , cabal-version = Some "3.10"
-        , stack-version = None Text
-        , enable-stack = Some False
-        , stack-no-global = None Bool
-        , stack-setup-ghc = None Bool
-        }
-      }
-
-let PyInfo = { python-version : Text, architecture : Optional Text }
-
-let CacheCfg =
-      { Type = { path : Text, key : Text, restoreKeys : Optional Text }
-      , default.restoreKeys = None Text
-      }
-
-let BuildStep =
-      < Uses :
-          { uses : Text
-          , id : Optional Text
-          , `with` : Optional VersionInfo.Type
-          }
-      | Name : { name : Text, run : Text }
-      | UseCache : { uses : Text, `with` : CacheCfg.Type }
-      | UsePy : { uses : Text, `with` : PyInfo }
-      | AwsEnv :
-          { name : Text
-          , run : Text
-          , env : { AWS_ACCESS_KEY_ID : Text, AWS_SECRET_ACCESS_KEY : Text }
-          }
-      >
-
-let DhallVersion = { ghc-version : GHC, cabal-version : Cabal }
-
-let Matrix = { matrix : { ghc : List Text, cabal : List Text } }
-
-let DhallMatrix =
-      { Type = { ghc : List GHC, cabal : List Cabal }
-      , default = { ghc = [ GHC.GHC8107 ], cabal = [ Cabal.Cabal32 ] }
-      }
-
-let Event = < push | release | pull_request >
-
-let CI =
-      { Type =
-          { name : Text
-          , on : List Event
-          , jobs :
-              { build :
-                  { runs-on : Text
-                  , steps : List BuildStep
-                  , strategy : Optional Matrix
-                  }
-              }
-          }
-      , default =
-        { name = "Haskell CI", on = [ Event.push, Event.pull_request ] }
-      }
-
 let printGhc =
       λ(ghc : GHC) →
         merge
@@ -173,18 +82,17 @@ let printGhc =
           }
           ghc
 
-let printOS =
-      λ(os : OS) →
-        merge
-          { Windows = "windows-latest"
-          , Ubuntu = "ubuntu-latest"
-          , Ubuntu2204 = "ubuntu-22.04"
-          , Ubuntu2004 = "ubuntu-20.04"
-          , Ubuntu1804 = "ubuntu-18.04"
-          , Ubuntu1604 = "ubuntu-16.04"
-          , MacOS = "macos-latest"
-          }
-          os
+let Cabal =
+      < Cabal310
+      | Cabal38
+      | Cabal36
+      | Cabal34
+      | Cabal32
+      | Cabal30
+      | Cabal24
+      | Cabal22
+      | Cabal20
+      >
 
 let printCabal =
       λ(cabal : Cabal) →
@@ -200,6 +108,106 @@ let printCabal =
           , Cabal20 = "2.0"
           }
           cabal
+
+let OS =
+      < Ubuntu
+      | Ubuntu2204
+      | Ubuntu2004
+      | Ubuntu1804
+      | Ubuntu1604
+      | MacOS
+      | Windows
+      >
+
+let printOS =
+      λ(os : OS) →
+        merge
+          { Windows = "windows-latest"
+          , Ubuntu = "ubuntu-latest"
+          , Ubuntu2204 = "ubuntu-22.04"
+          , Ubuntu2004 = "ubuntu-20.04"
+          , Ubuntu1804 = "ubuntu-18.04"
+          , Ubuntu1604 = "ubuntu-16.04"
+          , MacOS = "macos-latest"
+          }
+          os
+
+let defaultGHC = GHC.GHC947
+
+let latestGHC = GHC.GHC981
+
+let latestCabal = Cabal.Cabal310
+
+let defaultGHC3 = [ defaultGHC, GHC.GHC947, GHC.GHC928 ]
+
+let VersionInfo =
+      { Type =
+          { ghc-version : Optional Text
+          , cabal-version : Optional Text
+          , stack-version : Optional Text
+          , enable-stack : Optional Bool
+          , stack-no-global : Optional Bool
+          , stack-setup-ghc : Optional Bool
+          }
+      , default =
+        { ghc-version = Some (printGhc defaultGHC)
+        , cabal-version = Some "3.10"
+        , stack-version = None Text
+        , enable-stack = Some False
+        , stack-no-global = None Bool
+        , stack-setup-ghc = None Bool
+        }
+      }
+
+let PyInfo = { python-version : Text, architecture : Optional Text }
+
+let CacheCfg =
+      { Type = { path : Text, key : Text, restoreKeys : Optional Text }
+      , default.restoreKeys = None Text
+      }
+
+let BuildStep =
+      < Uses :
+          { uses : Text
+          , id : Optional Text
+          , `with` : Optional VersionInfo.Type
+          }
+      | Name : { name : Text, run : Text }
+      | UseCache : { uses : Text, `with` : CacheCfg.Type }
+      | UsePy : { uses : Text, `with` : PyInfo }
+      | AwsEnv :
+          { name : Text
+          , run : Text
+          , env : { AWS_ACCESS_KEY_ID : Text, AWS_SECRET_ACCESS_KEY : Text }
+          }
+      >
+
+let DhallVersion = { ghc-version : GHC, cabal-version : Cabal }
+
+let Matrix = { matrix : { ghc : List Text, cabal : List Text } }
+
+let DhallMatrix =
+      { Type = { ghc : List GHC, cabal : List Cabal }
+      , default = { ghc = [ defaultGHC ], cabal = [ latestCabal ] }
+      }
+
+let Event = < push | release | pull_request >
+
+let CI =
+      { Type =
+          { name : Text
+          , on : List Event
+          , jobs :
+              { build :
+                  { runs-on : Text
+                  , steps : List BuildStep
+                  , strategy : Optional Matrix
+                  }
+              }
+          }
+      , default =
+        { name = "Haskell CI", on = [ Event.push, Event.pull_request ] }
+      }
 
 let printEnv =
       λ(v : DhallVersion) →
@@ -255,10 +263,10 @@ let haskellEnv =
           }
 
 let defaultEnv =
-      printEnv { ghc-version = GHC.GHC947, cabal-version = Cabal.Cabal310 }
+      printEnv { ghc-version = defaultGHC, cabal-version = latestCabal }
 
 let latestEnv =
-      printEnv { ghc-version = GHC.GHC981, cabal-version = Cabal.Cabal310 }
+      printEnv { ghc-version = latestGHC, cabal-version = latestCabal }
 
 let matrixOS = "\${{ matrix.operating-system }}"
 
@@ -269,7 +277,7 @@ let matrixEnv =
       }
 
 let stackEnv =
-        { ghc-version = Some "9.4.7"
+        { ghc-version = Some (printGhc defaultGHC)
         , cabal-version = None Text
         , stack-version = Some "latest"
         , enable-stack = Some True
@@ -437,6 +445,8 @@ let stackSteps =
 
 let defaultCi = generalCi defaultCabalSteps (None DhallMatrix.Type) : CI.Type
 
+let defaultCi3 = generalCi defaultCabalSteps (Some { ghc = defaultGHC3, cabal = [ latestCabal ]}) : CI.Type
+
 in  { VersionInfo
     , BuildStep
     , Steps
@@ -462,8 +472,13 @@ in  { VersionInfo
     , haskellEnv
     , defaultEnv
     , latestEnv
+    , defaultGHC
+    , defaultGHC3
+    , latestGHC
+    , latestCabal
     , matrixEnv
     , defaultCi
+    , defaultCi3
     , generalCi
     , mkMatrix
     , printMatrix
