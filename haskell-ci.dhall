@@ -138,6 +138,8 @@ let latestGHC = GHC.GHC981
 
 let latestCabal = Cabal.Cabal310
 
+let defaultGHC3 = [ defaultGHC, GHC.GHC947, GHC.GHC928 ]
+
 let VersionInfo =
       { Type =
           { ghc-version : Optional Text
@@ -443,6 +445,8 @@ let stackSteps =
 
 let defaultCi = generalCi defaultCabalSteps (None DhallMatrix.Type) : CI.Type
 
+let defaultCi3 = generalCi defaultCabalSteps (Some { ghc = defaultGHC3, cabal = [ latestCabal ]}) : CI.Type
+
 in  { VersionInfo
     , BuildStep
     , Steps
@@ -469,10 +473,12 @@ in  { VersionInfo
     , defaultEnv
     , latestEnv
     , defaultGHC
+    , defaultGHC3
     , latestGHC
     , latestCabal
     , matrixEnv
     , defaultCi
+    , defaultCi3
     , generalCi
     , mkMatrix
     , printMatrix
