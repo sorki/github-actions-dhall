@@ -343,48 +343,103 @@ let cabalTestCoverage = cabalWithFlags "test all" [ "--enable-coverage" ]
 
 let cabalDoc = cabalWithFlags "haddock all" ([] : List Text)
 
+let Steps =
+      { Type =
+          { extraStepsPre : List BuildStep
+          , checkoutStep : BuildStep
+          , haskellEnvStep : BuildStep
+          , cabalUpdateStep : BuildStep
+          , cabalProjectFileStep : Optional BuildStep
+          , cabalFreezeStep : Optional BuildStep
+          , cacheStep : BuildStep
+          , cabalDepsStep : Optional BuildStep
+          , buildStep : BuildStep
+          , testStep : Optional BuildStep
+          , docStep : Optional BuildStep
+          , extraSteps : List BuildStep
+          }
+      , default =
+        { extraStepsPre = [] : List BuildStep
+        , checkoutStep = checkout
+        , haskellEnvStep = haskellEnv defaultEnv
+        , cabalUpdateStep = cabalUpdate
+        , cabalProjectFileStep = None BuildStep
+        , cabalFreezeStep = None BuildStep
+        , cacheStep = cache
+        , cabalDepsStep = None BuildStep
+        , buildStep = cabalBuild
+        , testStep = None BuildStep
+        , docStep = None BuildStep
+        , extraSteps = [] : List BuildStep
+        }
+      }
+
+let defaultCabalSteps =
+      Steps::{
+      , cabalProjectFileStep = Some cabalProjectFile
+      , cabalFreezeStep = Some cabalFreeze
+      , cabalDepsStep = Some cabalDeps
+      , testStep = Some cabalTest
+      , docStep = Some cabalDoc
+      }
+
+let defaultStackSteps =
+      Steps::{
+      , cacheStep = stackCache
+      , buildStep = stackBuild
+      , testStep = Some stackTest
+      }
+
+let stepsToList =
+      λ(steps : Steps.Type) →
+            steps.extraStepsPre
+          # Prelude.List.filterMap
+              (Optional BuildStep)
+              BuildStep
+              (λ(optStep : Optional BuildStep) → optStep)
+              [ Some steps.checkoutStep
+              , Some steps.haskellEnvStep
+              , Some steps.cabalUpdateStep
+              , steps.cabalProjectFileStep
+              , steps.cabalFreezeStep
+              , Some steps.cacheStep
+              , steps.cabalDepsStep
+              , Some steps.buildStep
+              , steps.testStep
+              , steps.docStep
+              ]
+          # steps.extraSteps
+        : List BuildStep
+
+let matrixSteps =
+        (defaultCabalSteps with haskellEnvStep = haskellEnv matrixEnv)
+      : Steps.Type
+
 let generalCi =
-      λ(sts : List BuildStep) →
+      λ(sts : Steps.Type) →
       λ(mat : Optional DhallMatrix.Type) →
           CI::{
           , jobs.build
             =
             { runs-on = printOS OS.Ubuntu
-            , steps = sts
-            , strategy = Prelude.Optional.map DhallMatrix.Type Matrix mkMatrix mat
+            , steps = stepsToList sts
+            , strategy =
+                Prelude.Optional.map DhallMatrix.Type Matrix mkMatrix mat
             }
           }
         : CI.Type
 
-let ciNoMatrix = λ(sts : List BuildStep) → generalCi sts (None DhallMatrix.Type)
-
-let stepsEnv =
-      λ(v : VersionInfo.Type) →
-          [ checkout
-          , haskellEnv v
-          , cabalUpdate
-          , cabalProjectFile
-          , cabalFreeze
-          , cache
-          , cabalDeps
-          , cabalBuild
-          , cabalTest
-          , cabalDoc
-          ]
-        : List BuildStep
+let ciNoMatrix = λ(sts : Steps.Type) → generalCi sts (None DhallMatrix.Type)
 
 let stackSteps =
         [ checkout, haskellEnv stackEnv, stackCache, stackBuild, stackTest ]
       : List BuildStep
 
-let matrixSteps = stepsEnv matrixEnv : List BuildStep
-
-let defaultSteps = stepsEnv defaultEnv : List BuildStep
-
-let defaultCi = generalCi defaultSteps (None DhallMatrix.Type) : CI.Type
+let defaultCi = generalCi defaultCabalSteps (None DhallMatrix.Type) : CI.Type
 
 in  { VersionInfo
     , BuildStep
+    , Steps
     , Matrix
     , CI
     , GHC
@@ -416,10 +471,10 @@ in  { VersionInfo
     , printGhc
     , printCabal
     , printOS
-    , stepsEnv
     , matrixOS
+    , defaultCabalSteps
+    , defaultStackSteps
     , matrixSteps
-    , defaultSteps
     , ciNoMatrix
     , cache
     , stackEnv
