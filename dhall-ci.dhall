@@ -1,29 +1,16 @@
 let haskellCi = ./haskell-ci.dhall
 
-let concatMap =
-      https://raw.githubusercontent.com/dhall-lang/dhall-lang/9f259cd68870b912fbf2f2a08cd63dc3ccba9dc3/Prelude/Text/concatMap sha256:7a0b0b99643de69d6f94ba49441cd0fa0507cbdfa8ace0295f16097af37e226f
+let Prelude =
+      https://prelude.dhall-lang.org/v22.0.0/package.dhall
+        sha256:1c7622fdc868fe3a23462df3e6f533e50fdc12ecf3b42c0bb45c328ec8c4293e
 
 let dhallInstall =
       haskellCi.BuildStep.Name
-        { name = "Install dhall"
-        , run =
-            ''
-            cabal update
-            cd "$(mktemp -d /tmp/dhall-XXX)"
-            cabal install dhall
-            ''
-        }
+        { name = "Install dhall", run = "cabal install dhall" }
 
 let dhallYamlInstall =
       haskellCi.BuildStep.Name
-        { name = "Install dhall-to-yaml &c."
-        , run =
-            ''
-            cabal update
-            cd "$(mktemp -d /tmp/dhall-XXX)"
-            cabal install dhall-yaml
-            ''
-        }
+        { name = "Install dhall-to-yaml &c.", run = "cabal install dhall-yaml" }
 
 let checkDhall =
       λ(dhalls : List Text) →
@@ -33,7 +20,7 @@ let checkDhall =
                   ''
                   export PATH=$HOME/.cabal/bin:$PATH
                   ''
-              ++  concatMap
+              ++  Prelude.Text.concatMap
                     Text
                     ( λ(d : Text) →
                         ''
@@ -51,7 +38,7 @@ let checkDhallYaml =
                   ''
                   export PATH=$HOME/.cabal/bin:$PATH
                   ''
-              ++  concatMap
+              ++  Prelude.Text.concatMap
                     Text
                     ( λ(d : Text) →
                         ''
@@ -64,7 +51,7 @@ let checkDhallYaml =
 let dhallSteps =
       λ(steps : List haskellCi.BuildStep) →
             haskellCi.ciNoMatrix
-              haskellCi.Steps::{ buildStep = dhallInstall , extraSteps = steps }
+              haskellCi.Steps::{ buildStep = dhallInstall, extraSteps = steps }
           ⫽ { name = "Dhall CI" }
         : haskellCi.CI.Type
 
