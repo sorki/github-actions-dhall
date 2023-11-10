@@ -254,11 +254,17 @@ let haskellEnv =
           , `with` = Some v
           }
 
+let defaultGHC = GHC.GHC947
+
+let latestGHC = GHC.GHC981
+
+let latestCabal = Cabal.Cabal310
+
 let defaultEnv =
-      printEnv { ghc-version = GHC.GHC947, cabal-version = Cabal.Cabal310 }
+      printEnv { ghc-version = defaultGHC, cabal-version = latestCabal }
 
 let latestEnv =
-      printEnv { ghc-version = GHC.GHC981, cabal-version = Cabal.Cabal310 }
+      printEnv { ghc-version = latestGHC, cabal-version = latestCabal }
 
 let matrixOS = "\${{ matrix.operating-system }}"
 
@@ -269,7 +275,7 @@ let matrixEnv =
       }
 
 let stackEnv =
-        { ghc-version = Some "9.4.7"
+        { ghc-version = Some (printGhc defaultGHC)
         , cabal-version = None Text
         , stack-version = Some "latest"
         , enable-stack = Some True
@@ -462,6 +468,9 @@ in  { VersionInfo
     , haskellEnv
     , defaultEnv
     , latestEnv
+    , defaultGHC
+    , latestGHC
+    , latestCabal
     , matrixEnv
     , defaultCi
     , generalCi
