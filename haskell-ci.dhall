@@ -314,10 +314,13 @@ let cmdWithFlags =
       λ(cmd : Text) →
       λ(subcommand : Text) →
       λ(flags : List Text) →
-        let flagStr = Prelude.Text.concatSep " " flags
+        let flagStr =
+              if    Prelude.List.null Text flags
+              then  ""
+              else  " " ++ Prelude.Text.concatSep " " flags
 
         in  BuildStep.Name
-              { name = subcommand, run = "${cmd} ${subcommand} ${flagStr}" }
+              { name = subcommand, run = "${cmd} ${subcommand}${flagStr}" }
 
 let cabalWithFlags = cmdWithFlags "cabal"
 
