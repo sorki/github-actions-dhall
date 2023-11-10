@@ -41,6 +41,47 @@ let GHC =
       | GHC981
       >
 
+let printGhc =
+      λ(ghc : GHC) →
+        merge
+          { GHC7103 = "7.10.3"
+          , GHC802 = "8.0.2"
+          , GHC822 = "8.2.2"
+          , GHC844 = "8.4.4"
+          , GHC865 = "8.6.5"
+          , GHC883 = "8.8.3"
+          , GHC884 = "8.8.4"
+          , GHC8101 = "8.10.1"
+          , GHC8102 = "8.10.2"
+          , GHC8103 = "8.10.3"
+          , GHC8104 = "8.10.4"
+          , GHC8105 = "8.10.5"
+          , GHC8106 = "8.10.6"
+          , GHC8107 = "8.10.7"
+          , GHC901 = "9.0.1"
+          , GHC902 = "9.0.2"
+          , GHC921 = "9.2.1"
+          , GHC922 = "9.2.2"
+          , GHC923 = "9.2.3"
+          , GHC924 = "9.2.4"
+          , GHC925 = "9.2.5"
+          , GHC926 = "9.2.6"
+          , GHC927 = "9.2.7"
+          , GHC928 = "9.2.8"
+          , GHC941 = "9.4.1"
+          , GHC942 = "9.4.2"
+          , GHC943 = "9.4.3"
+          , GHC944 = "9.4.4"
+          , GHC945 = "9.4.5"
+          , GHC946 = "9.4.6"
+          , GHC947 = "9.4.7"
+          , GHC961 = "9.6.1"
+          , GHC962 = "9.6.2"
+          , GHC963 = "9.6.3"
+          , GHC981 = "9.8.1"
+          }
+          ghc
+
 let Cabal =
       < Cabal310
       | Cabal38
@@ -53,6 +94,21 @@ let Cabal =
       | Cabal20
       >
 
+let printCabal =
+      λ(cabal : Cabal) →
+        merge
+          { Cabal310 = "3.10"
+          , Cabal38 = "3.8"
+          , Cabal36 = "3.6"
+          , Cabal34 = "3.4"
+          , Cabal32 = "3.2"
+          , Cabal30 = "3.0"
+          , Cabal24 = "2.4"
+          , Cabal22 = "2.2"
+          , Cabal20 = "2.0"
+          }
+          cabal
+
 let OS =
       < Ubuntu
       | Ubuntu2204
@@ -62,6 +118,25 @@ let OS =
       | MacOS
       | Windows
       >
+
+let printOS =
+      λ(os : OS) →
+        merge
+          { Windows = "windows-latest"
+          , Ubuntu = "ubuntu-latest"
+          , Ubuntu2204 = "ubuntu-22.04"
+          , Ubuntu2004 = "ubuntu-20.04"
+          , Ubuntu1804 = "ubuntu-18.04"
+          , Ubuntu1604 = "ubuntu-16.04"
+          , MacOS = "macos-latest"
+          }
+          os
+
+let defaultGHC = GHC.GHC947
+
+let latestGHC = GHC.GHC981
+
+let latestCabal = Cabal.Cabal310
 
 let VersionInfo =
       { Type =
@@ -73,7 +148,7 @@ let VersionInfo =
           , stack-setup-ghc : Optional Bool
           }
       , default =
-        { ghc-version = Some "9.4.7"
+        { ghc-version = Some (printGhc defaultGHC)
         , cabal-version = Some "3.10"
         , stack-version = None Text
         , enable-stack = Some False
@@ -132,75 +207,6 @@ let CI =
         { name = "Haskell CI", on = [ Event.push, Event.pull_request ] }
       }
 
-let printGhc =
-      λ(ghc : GHC) →
-        merge
-          { GHC7103 = "7.10.3"
-          , GHC802 = "8.0.2"
-          , GHC822 = "8.2.2"
-          , GHC844 = "8.4.4"
-          , GHC865 = "8.6.5"
-          , GHC883 = "8.8.3"
-          , GHC884 = "8.8.4"
-          , GHC8101 = "8.10.1"
-          , GHC8102 = "8.10.2"
-          , GHC8103 = "8.10.3"
-          , GHC8104 = "8.10.4"
-          , GHC8105 = "8.10.5"
-          , GHC8106 = "8.10.6"
-          , GHC8107 = "8.10.7"
-          , GHC901 = "9.0.1"
-          , GHC902 = "9.0.2"
-          , GHC921 = "9.2.1"
-          , GHC922 = "9.2.2"
-          , GHC923 = "9.2.3"
-          , GHC924 = "9.2.4"
-          , GHC925 = "9.2.5"
-          , GHC926 = "9.2.6"
-          , GHC927 = "9.2.7"
-          , GHC928 = "9.2.8"
-          , GHC941 = "9.4.1"
-          , GHC942 = "9.4.2"
-          , GHC943 = "9.4.3"
-          , GHC944 = "9.4.4"
-          , GHC945 = "9.4.5"
-          , GHC946 = "9.4.6"
-          , GHC947 = "9.4.7"
-          , GHC961 = "9.6.1"
-          , GHC962 = "9.6.2"
-          , GHC963 = "9.6.3"
-          , GHC981 = "9.8.1"
-          }
-          ghc
-
-let printOS =
-      λ(os : OS) →
-        merge
-          { Windows = "windows-latest"
-          , Ubuntu = "ubuntu-latest"
-          , Ubuntu2204 = "ubuntu-22.04"
-          , Ubuntu2004 = "ubuntu-20.04"
-          , Ubuntu1804 = "ubuntu-18.04"
-          , Ubuntu1604 = "ubuntu-16.04"
-          , MacOS = "macos-latest"
-          }
-          os
-
-let printCabal =
-      λ(cabal : Cabal) →
-        merge
-          { Cabal310 = "3.10"
-          , Cabal38 = "3.8"
-          , Cabal36 = "3.6"
-          , Cabal34 = "3.4"
-          , Cabal32 = "3.2"
-          , Cabal30 = "3.0"
-          , Cabal24 = "2.4"
-          , Cabal22 = "2.2"
-          , Cabal20 = "2.0"
-          }
-          cabal
-
 let printEnv =
       λ(v : DhallVersion) →
         VersionInfo::{
@@ -253,12 +259,6 @@ let haskellEnv =
           , id = Some "setup-haskell-cabal"
           , `with` = Some v
           }
-
-let defaultGHC = GHC.GHC947
-
-let latestGHC = GHC.GHC981
-
-let latestCabal = Cabal.Cabal310
 
 let defaultEnv =
       printEnv { ghc-version = defaultGHC, cabal-version = latestCabal }
