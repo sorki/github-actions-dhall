@@ -6,25 +6,11 @@ let Prelude =
 
 let dhallInstall =
       haskellCi.BuildStep.Name
-        { name = "Install dhall"
-        , run =
-            ''
-            cabal update
-            cd "$(mktemp -d /tmp/dhall-XXX)"
-            cabal install dhall
-            ''
-        }
+        { name = "Install dhall", run = "cabal install dhall" }
 
 let dhallYamlInstall =
       haskellCi.BuildStep.Name
-        { name = "Install dhall-to-yaml &c."
-        , run =
-            ''
-            cabal update
-            cd "$(mktemp -d /tmp/dhall-XXX)"
-            cabal install dhall-yaml
-            ''
-        }
+        { name = "Install dhall-to-yaml &c.", run = "cabal install dhall-yaml" }
 
 let checkDhall =
       λ(dhalls : List Text) →
