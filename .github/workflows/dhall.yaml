@@ -18,15 +18,9 @@ jobs:
           ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
           dist-newstyle
     - name: Install dhall
-      run: |
-        cabal update
-        cd "$(mktemp -d /tmp/dhall-XXX)"
-        cabal install dhall
+      run: cabal install dhall
     - name: "Install dhall-to-yaml &c."
-      run: |
-        cabal update
-        cd "$(mktemp -d /tmp/dhall-XXX)"
-        cabal install dhall-yaml
+      run: "cabal install dhall-yaml"
     - name: Check Dhall
       run: |
         export PATH=$HOME/.cabal/bin:$PATH
@@ -40,3 +34,4 @@ jobs:
 name: Dhall CI
 'on':
 - push
+- pull_request
