@@ -341,7 +341,7 @@ let cabalTestProfiling = cabalWithFlags "test all" [ "--enable-profiling" ]
 
 let cabalTestCoverage = cabalWithFlags "test all" [ "--enable-coverage" ]
 
-let cabalDoc = cabalWithFlags "haddock all" ([] : List Text)
+let cabalDoc = cabalWithFlags "haddock" ([] : List Text)
 
 let Steps =
       { Type =

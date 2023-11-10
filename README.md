@@ -67,8 +67,8 @@ jobs:
         run: cabal build all --enable-tests --enable-benchmarks
       - name: test all
         run: cabal test all --enable-tests
-      - name: haddock all
-        run: cabal haddock all 
+      - name: haddock
+        run: cabal haddock 
     strategy:
       matrix:
         cabal:
