@@ -83,3 +83,14 @@ name: Haskell CI
 - push
 - pull_request
 ```
+
+## Projects that use `github-actions-dhall`
+
+* [data-lens-light](https://github.com/UnkindPartition/data-lens-light)
+* [gcodehs](https://github.com/distrap/gcodehs/)
+* [Haskell-Nix-Derivation-Library](https://github.com/Gabriella439/Haskell-Nix-Derivation-Library/)
+* [haskell-project-template](https://github.com/sorki/haskell-project-template/)
+* [ImplicitCAD](https://github.com/Haskell-Things/ImplicitCAD)
+* [nix-diff](https://github.com/Gabriella439/nix-diff)
+* [nix-narinfo](https://github.com/sorki/nix-narinfo/)
+* [ImplicitCAD](https://github.com/Haskell-Things/ImplicitCAD)
