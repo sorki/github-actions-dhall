@@ -448,7 +448,7 @@ let stackSteps =
 
 let defaultCi = generalCi defaultCabalSteps (None DhallMatrix.Type) : CI.Type
 
-let defaultCi3 = generalCi defaultCabalSteps (Some { ghc = defaultGHC3, cabal = [ latestCabal ]}) : CI.Type
+let defaultCi3 = generalCi matrixSteps (Some { ghc = defaultGHC3, cabal = [ latestCabal ]}) : CI.Type
 
 in  { VersionInfo
     , BuildStep
