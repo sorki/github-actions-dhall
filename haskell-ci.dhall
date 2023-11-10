@@ -280,16 +280,6 @@ let stackEnv =
 
 let mkMatrix = λ(st : DhallMatrix.Type) → { matrix = printMatrix st } : Matrix
 
-let hlintDirs =
-      λ(dirs : List Text) →
-        let bashDirs = Prelude.Text.concatSep " " dirs
-
-        in  BuildStep.Name
-              { name = "Run hlint"
-              , run =
-                  "curl -sSL https://raw.github.com/ndmitchell/hlint/master/misc/run.sh | sh -s ${bashDirs}"
-              }
-
 let cabalUpdate =
       BuildStep.Name
         { name = "Update Hackage repository", run = "cabal update" }
@@ -391,12 +381,6 @@ let matrixSteps = stepsEnv matrixEnv : List BuildStep
 
 let defaultSteps = stepsEnv defaultEnv : List BuildStep
 
-let hlintAction =
-      λ(dirs : List Text) →
-            generalCi [ checkout, hlintDirs dirs ] (None DhallMatrix.Type)
-          ⫽ { name = "HLint checks" }
-        : CI.Type
-
 let defaultCi = generalCi defaultSteps (None DhallMatrix.Type) : CI.Type
 
 in  { VersionInfo
@@ -436,8 +420,6 @@ in  { VersionInfo
     , matrixOS
     , matrixSteps
     , defaultSteps
-    , hlintDirs
-    , hlintAction
     , ciNoMatrix
     , cache
     , stackEnv
