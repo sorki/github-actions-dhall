@@ -111,7 +111,7 @@ let Matrix = { matrix : { ghc : List Text, cabal : List Text } }
 
 let DhallMatrix =
       { Type = { ghc : List GHC, cabal : List Cabal }
-      , default = { ghc = [ GHC.GHC8107 ], cabal = [ Cabal.Cabal32 ] }
+      , default = { ghc = [ defaultGHC ], cabal = [ latestCabal ] }
       }
 
 let Event = < push | release | pull_request >
