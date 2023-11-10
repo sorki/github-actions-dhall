@@ -24,7 +24,7 @@ in    haskellCi.generalCi
             { ghc =
               [ haskellCi.GHC.GHC963
               , haskellCi.GHC.GHC947
-              , haskellCi.GHC.GHC927
+              , haskellCi.GHC.GHC928
               ]
             , cabal = [ haskellCi.Cabal.Cabal310 ]
             }
