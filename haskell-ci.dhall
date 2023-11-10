@@ -132,7 +132,7 @@ let printOS =
           }
           os
 
-let defaultGHC = GHC.GHC947
+let defaultGHC = GHC.GHC963
 
 let latestGHC = GHC.GHC981
 
