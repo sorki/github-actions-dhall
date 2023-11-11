@@ -129,7 +129,7 @@ See [example-defaultCi3/ci.dhall](./example-defaultCi3/ci.dhall)
 #### `cabal.project.local.ci`
 
 If you want to set specific flags or options like
-`-Werror` only on ci and not in the local dev environment,
+`-Werror` only on CI and not in the local dev environment,
 you can add `cabal.project.local.ci` file which
 is copied to `cabal.project.local` during workflow run.
 
