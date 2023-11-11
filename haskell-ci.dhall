@@ -166,6 +166,7 @@ let BuildStep =
           , `with` : Optional VersionInfo.Type
           }
       | Name : { name : Text, run : Text }
+      | NameIf : { name : Text, run : Text, `if` : Text }
       | UseCache : { uses : Text, `with` : CacheCfg.Type }
       | AwsEnv :
           { name : Text
