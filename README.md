@@ -160,3 +160,8 @@ package somepackage:
 
 Typically synchronized with an upstream [haskell-actions/setup](https://github.com/haskell-actions/setup/)
 from their [versions.json](https://github.com/haskell-actions/setup/blob/main/src/versions.json)
+
+## Prior art
+
+- Original https://github.com/vmchale/github-actions-dhall
+- General purpose library https://github.com/regadas/github-actions-dhall
