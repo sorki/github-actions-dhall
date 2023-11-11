@@ -144,7 +144,7 @@ let VersionInfo =
       { Type = { ghc-version : Optional Text, cabal-version : Optional Text }
       , default =
         { ghc-version = Some (printGhc defaultGHC)
-        , cabal-version = Some "3.10"
+        , cabal-version = Some (printCabal latestCabal)
         }
       }
 
