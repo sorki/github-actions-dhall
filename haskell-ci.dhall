@@ -186,11 +186,12 @@ let BuildStep =
 
 let DhallVersion = { ghc-version : GHC, cabal-version : Cabal }
 
-let Matrix = { matrix : { ghc : List Text, cabal : List Text } }
+let Matrix = { matrix : { ghc : List Text, cabal : List Text, os : List Text } }
 
 let DhallMatrix =
-      { Type = { ghc : List GHC, cabal : List Cabal }
-      , default = { ghc = [ defaultGHC ], cabal = [ latestCabal ] }
+      { Type = { ghc : List GHC, cabal : List Cabal, os : List OS }
+      , default =
+        { ghc = [ defaultGHC ], cabal = [ latestCabal ], os = [ OS.Ubuntu ] }
       }
 
 let Event =
@@ -233,6 +234,7 @@ let printMatrix =
       λ(v : DhallMatrix.Type) →
         { ghc = Prelude.List.map GHC Text printGhc v.ghc
         , cabal = Prelude.List.map Cabal Text printCabal v.cabal
+        , os = Prelude.List.map OS Text printOS v.os
         }
 
 let cache =
@@ -245,7 +247,7 @@ let cache =
               dist-newstyle
               ''
           , key =
-              "\${{ runner.os }}-\${{ matrix.ghc }}-cabal-\${{ hashFiles('cabal.project.freeze') }}"
+              "\${{ matrix.os }}-\${{ matrix.ghc }}-cabal-\${{ hashFiles('cabal.project.freeze') }}"
           , restoreKeys = None Text
           }
         }
@@ -255,7 +257,7 @@ let stackCache =
         { uses = "actions/cache@v3"
         , `with` =
           { path = "~/.stack"
-          , key = "\${{ runner.os }}-\${{ matrix.ghc }}-stack"
+          , key = "\${{ matrix.os }}-\${{ matrix.ghc }}-stack"
           , restoreKeys = None Text
           }
         }
@@ -282,8 +284,6 @@ let defaultEnv =
 
 let latestEnv =
       printEnv { ghc-version = latestGHC, cabal-version = latestCabal }
-
-let matrixOS = "\${{ matrix.operating-system }}"
 
 let matrixEnv =
       VersionInfo::{
@@ -509,7 +509,7 @@ let generalCi =
           CI::{
           , jobs.build
             =
-            { runs-on = printOS OS.Ubuntu
+            { runs-on = "\${{ matrix.os }}"
             , steps = stepsToList sts
             , strategy =
                 Prelude.Optional.map DhallMatrix.Type Matrix mkMatrix mat
@@ -526,10 +526,7 @@ let stackSteps =
 let defaultCi = generalCi defaultCabalSteps (None DhallMatrix.Type) : CI.Type
 
 let defaultCi3 =
-        generalCi
-          matrixSteps
-          (Some { ghc = defaultGHC3, cabal = [ latestCabal ] })
-      : CI.Type
+      generalCi matrixSteps (Some DhallMatrix::{ ghc = defaultGHC3 }) : CI.Type
 
 in  { VersionInfo
     , BuildStep
@@ -570,7 +567,6 @@ in  { VersionInfo
     , printGhc
     , printCabal
     , printOS
-    , matrixOS
     , defaultCabalSteps
     , defaultStackSteps
     , matrixSteps
