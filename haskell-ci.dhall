@@ -408,11 +408,22 @@ let cabalTestCoverage = cabalWithFlags "test all" [ "--enable-coverage" ]
 
 let cabalDoc = cabalWithFlags "haddock" ([] : List Text)
 
+let ExtraSteps =
+      { Type =
+          { pre : List BuildStep
+          , postCheckout : List BuildStep
+          , post : List BuildStep
+          }
+      , default =
+        { pre = [] : List BuildStep
+        , postCheckout = [] : List BuildStep
+        , post = [] : List BuildStep
+        }
+      }
+
 let Steps =
       { Type =
-          { extraStepsPre : List BuildStep
-          , checkoutStep : BuildStep
-          , extraStepsPostCheckout : List BuildStep
+          { checkoutStep : BuildStep
           , haskellEnvStep : BuildStep
           , cabalUpdateStep : BuildStep
           , cabalProjectFileStep : Optional BuildStep
@@ -422,12 +433,10 @@ let Steps =
           , buildStep : BuildStep
           , testStep : Optional BuildStep
           , docStep : Optional BuildStep
-          , extraSteps : List BuildStep
+          , extraSteps : ExtraSteps.Type
           }
       , default =
-        { extraStepsPre = [] : List BuildStep
-        , checkoutStep = checkout
-        , extraStepsPostCheckout = [] : List BuildStep
+        { checkoutStep = checkout
         , haskellEnvStep = haskellEnv defaultEnv
         , cabalUpdateStep = cabalUpdate
         , cabalProjectFileStep = None BuildStep
@@ -437,7 +446,7 @@ let Steps =
         , buildStep = cabalBuild
         , testStep = None BuildStep
         , docStep = None BuildStep
-        , extraSteps = [] : List BuildStep
+        , extraSteps = ExtraSteps.default
         }
       }
 
@@ -459,9 +468,9 @@ let defaultStackSteps =
 
 let stepsToList =
       λ(steps : Steps.Type) →
-            steps.extraStepsPre
+            steps.extraSteps.pre
           # [ steps.checkoutStep ]
-          # steps.extraStepsPostCheckout
+          # steps.extraSteps.postCheckout
           # Prelude.List.filterMap
               (Optional BuildStep)
               BuildStep
@@ -476,7 +485,7 @@ let stepsToList =
               , steps.testStep
               , steps.docStep
               ]
-          # steps.extraSteps
+          # steps.extraSteps.post
         : List BuildStep
 
 let matrixSteps =
@@ -514,6 +523,7 @@ let defaultCi3 =
 in  { VersionInfo
     , BuildStep
     , Steps
+    , ExtraSteps
     , Matrix
     , CI
     , GHC
