@@ -159,8 +159,6 @@ let VersionInfo =
         }
       }
 
-let PyInfo = { python-version : Text, architecture : Optional Text }
-
 let CacheCfg =
       { Type = { path : Text, key : Text, restoreKeys : Optional Text }
       , default.restoreKeys = None Text
@@ -174,7 +172,6 @@ let BuildStep =
           }
       | Name : { name : Text, run : Text }
       | UseCache : { uses : Text, `with` : CacheCfg.Type }
-      | UsePy : { uses : Text, `with` : PyInfo }
       | AwsEnv :
           { name : Text
           , run : Text
@@ -497,7 +494,6 @@ in  { VersionInfo
     , DhallMatrix
     , CacheCfg
     , OS
-    , PyInfo
     , Event
     , cabalDoc
     , cabalTest
