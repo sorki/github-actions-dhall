@@ -4,7 +4,6 @@ let Prelude =
 
 let Triggers = ./triggers.dhall
 
--- See https://github.com/haskell-actions/setup/blob/main/src/versions.json
 let GHC =
       < GHC7103
       | GHC802
@@ -261,8 +260,6 @@ let cabalUpdate =
       BuildStep.Name
         { name = "Update Hackage repository", run = "cabal update" }
 
--- use this eg. if you want to set specific flags or options like
--- `-Werror` only on ci, not in the local dev environment.
 let cabalProjectFile =
       BuildStep.Name
         { name = "cabal.project.local.ci"

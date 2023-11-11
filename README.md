@@ -84,6 +84,25 @@ name: Haskell CI
 - pull_request
 ```
 
+### Customization
+
+#### `cabal.project.local.ci`
+
+If you want to set specific flags or options like
+`-Werror` only on ci and not in the local dev environment,
+you can add `cabal.project.local.ci` file which
+is copied to `cabal.project.local` during workflow run.
+
+Example contents:
+```
+flags: +someflag
+
+package somepackage:
+  ghc-options:
+    -Wunused-packages
+    -Wall
+```
+
 ## Projects that use `github-actions-dhall`
 
 * [data-lens-light](https://github.com/UnkindPartition/data-lens-light)
@@ -94,3 +113,10 @@ name: Haskell CI
 * [nix-diff](https://github.com/Gabriella439/nix-diff)
 * [nix-narinfo](https://github.com/sorki/nix-narinfo/)
 * [ImplicitCAD](https://github.com/Haskell-Things/ImplicitCAD)
+
+## Development
+
+### GHC and Cabal versions
+
+Typically synchronized with an upstream [haskell-actions/setup](https://github.com/haskell-actions/setup/)
+from their [versions.json](https://github.com/haskell-actions/setup/blob/main/src/versions.json)
