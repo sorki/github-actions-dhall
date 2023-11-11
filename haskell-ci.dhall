@@ -141,10 +141,7 @@ let latestCabal = Cabal.Cabal310
 let defaultGHC3 = [ defaultGHC, GHC.GHC947, GHC.GHC928 ]
 
 let VersionInfo =
-      { Type =
-          { ghc-version : Optional Text
-          , cabal-version : Optional Text
-          }
+      { Type = { ghc-version : Optional Text, cabal-version : Optional Text }
       , default =
         { ghc-version = Some (printGhc defaultGHC)
         , cabal-version = Some "3.10"
@@ -199,10 +196,7 @@ let CI =
           , on : List Event
           , jobs :
               { build :
-                  { runs-on : Text
-                  , steps : List BuildStep
-                  , strategy : Optional Matrix
-                  }
+                  { runs-on : Text, steps : List BuildStep, strategy : Matrix }
               }
           }
       , default =
@@ -410,7 +404,7 @@ let Steps =
           }
       , default =
         { checkoutStep = checkout
-        , haskellEnvStep = haskellEnv defaultEnv
+        , haskellEnvStep = haskellEnv matrixEnv
         , cabalUpdateStep = cabalUpdate
         , cabalProjectFileStep = None BuildStep
         , cabalFreezeStep = None BuildStep
@@ -454,30 +448,23 @@ let stepsToList =
           # steps.extraSteps.post
         : List BuildStep
 
-let matrixSteps =
-        (defaultCabalSteps with haskellEnvStep = haskellEnv matrixEnv)
-      : Steps.Type
-
 let generalCi =
       λ(sts : Steps.Type) →
-      λ(mat : Optional DhallMatrix.Type) →
+      λ(mat : DhallMatrix.Type) →
           CI::{
           , jobs.build
             =
             { runs-on = "\${{ matrix.os }}"
             , steps = stepsToList sts
-            , strategy =
-                Prelude.Optional.map DhallMatrix.Type Matrix mkMatrix mat
+            , strategy = mkMatrix mat
             }
           }
         : CI.Type
 
-let ciNoMatrix = λ(sts : Steps.Type) → generalCi sts (None DhallMatrix.Type)
-
-let defaultCi = generalCi defaultCabalSteps (None DhallMatrix.Type) : CI.Type
+let defaultCi = generalCi defaultCabalSteps DhallMatrix.default : CI.Type
 
 let defaultCi3 =
-      generalCi matrixSteps (Some DhallMatrix::{ ghc = defaultGHC3 }) : CI.Type
+      generalCi defaultCabalSteps DhallMatrix::{ ghc = defaultGHC3 } : CI.Type
 
 in  { VersionInfo
     , BuildStep
@@ -519,8 +506,6 @@ in  { VersionInfo
     , printCabal
     , printOS
     , defaultCabalSteps
-    , matrixSteps
-    , ciNoMatrix
     , cache
     , installCachixStep
     , installNixActionStep

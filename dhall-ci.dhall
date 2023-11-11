@@ -50,8 +50,11 @@ let checkDhallYaml =
 
 let dhallSteps =
       λ(steps : List haskellCi.BuildStep) →
-            haskellCi.ciNoMatrix
-              (haskellCi.Steps::{ buildStep = dhallInstall } with extraSteps.post = steps)
+            haskellCi.generalCi
+              ( haskellCi.Steps::{ buildStep = dhallInstall }
+                with extraSteps.post = steps
+              )
+              haskellCi.DhallMatrix.default
           ⫽ { name = "Dhall CI" }
         : haskellCi.CI.Type
 
