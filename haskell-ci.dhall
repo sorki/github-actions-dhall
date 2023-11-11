@@ -318,6 +318,13 @@ let cabalDeps =
             "cabal build all --enable-tests --enable-benchmarks --only-dependencies"
         }
 
+let installNixActionStep =
+      BuildStep.Uses
+        { uses = "cachix/install-nix-action@v23"
+        , id = None Text
+        , `with` = None VersionInfo.Type
+        }
+
 let cmdWithFlags =
       λ(cmd : Text) →
       λ(subcommand : Text) →
@@ -501,4 +508,5 @@ in  { VersionInfo
     , stackBuild
     , stackTest
     , stackCache
+    , installNixActionStep
     }
