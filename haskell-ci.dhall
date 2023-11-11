@@ -325,6 +325,26 @@ let installNixActionStep =
         , `with` = None VersionInfo.Type
         }
 
+let hlintStep =
+      BuildStep.Name
+        { name = "Install and run hlint (optional)"
+        , run =
+            ''
+                cabal install hlint
+                hlint -g --no-exit-code
+            ''
+        }
+
+let hlintRequiredStep =
+      BuildStep.Name
+        { name = "Install and run hlint"
+        , run =
+            ''
+                cabal install hlint
+                hlint -g
+            ''
+        }
+
 let cmdWithFlags =
       λ(cmd : Text) →
       λ(subcommand : Text) →
@@ -513,4 +533,6 @@ in  { VersionInfo
     , stackTest
     , stackCache
     , installNixActionStep
+    , hlintStep
+    , hlintRequiredStep
     }
