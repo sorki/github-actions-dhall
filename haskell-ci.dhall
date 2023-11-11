@@ -387,6 +387,7 @@ let Steps =
       { Type =
           { extraStepsPre : List BuildStep
           , checkoutStep : BuildStep
+          , extraStepsPostCheckout : List BuildStep
           , haskellEnvStep : BuildStep
           , cabalUpdateStep : BuildStep
           , cabalProjectFileStep : Optional BuildStep
@@ -401,6 +402,7 @@ let Steps =
       , default =
         { extraStepsPre = [] : List BuildStep
         , checkoutStep = checkout
+        , extraStepsPostCheckout = [] : List BuildStep
         , haskellEnvStep = haskellEnv defaultEnv
         , cabalUpdateStep = cabalUpdate
         , cabalProjectFileStep = None BuildStep
@@ -433,12 +435,13 @@ let defaultStackSteps =
 let stepsToList =
       λ(steps : Steps.Type) →
             steps.extraStepsPre
+          # [ steps.checkoutStep ]
+          # steps.extraStepsPostCheckout
           # Prelude.List.filterMap
               (Optional BuildStep)
               BuildStep
               (λ(optStep : Optional BuildStep) → optStep)
-              [ Some steps.checkoutStep
-              , Some steps.haskellEnvStep
+              [ Some steps.haskellEnvStep
               , Some steps.cabalUpdateStep
               , steps.cabalProjectFileStep
               , steps.cabalFreezeStep
