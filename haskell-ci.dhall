@@ -335,6 +335,21 @@ let installNixActionStep =
             : Optional (Prelude.Map.Type Text Text)
         }
 
+let installCachixStep =
+      λ(accountName : Text) →
+        BuildStep.Uses
+          { uses = "cachix/cachix-action@v12"
+          , id = None Text
+          , `with` =
+                Some
+                  [ Prelude.Map.keyText "name" accountName
+                  , Prelude.Map.keyText
+                      "signingKey"
+                      "\${{ secrets.CACHIX_SIGNING_KEY }}"
+                  ]
+              : Optional (Prelude.Map.Type Text Text)
+          }
+
 let nixBuildStep = BuildStep.Name { name = "Build with Nix", run = "nix-build" }
 
 let hlintStep =
@@ -546,6 +561,7 @@ in  { VersionInfo
     , stackBuild
     , stackTest
     , stackCache
+    , installCachixStep
     , installNixActionStep
     , nixBuildStep
     , hlintStep
