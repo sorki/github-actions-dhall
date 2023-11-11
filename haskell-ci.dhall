@@ -449,7 +449,9 @@ let generalCi =
           }
         : CI.Type
 
-let defaultCi = generalCi defaultCabalSteps DhallMatrix.default : CI.Type
+let generalCi1 = λ(sts : Steps.Type) → generalCi sts DhallMatrix.default
+
+let defaultCi = generalCi1 defaultCabalSteps : CI.Type
 
 let defaultCi3 =
       generalCi defaultCabalSteps DhallMatrix::{ ghc = defaultGHC3 } : CI.Type
@@ -490,6 +492,7 @@ in  { VersionInfo
     , defaultCi
     , defaultCi3
     , generalCi
+    , generalCi1
     , mkMatrix
     , printMatrix
     , printEnv
