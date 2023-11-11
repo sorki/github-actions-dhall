@@ -325,6 +325,8 @@ let installNixActionStep =
         , `with` = None VersionInfo.Type
         }
 
+let nixBuildStep = BuildStep.Name { name = "Build with Nix", run = "nix-build" }
+
 let hlintStep =
       BuildStep.Name
         { name = "Install and run hlint (optional)"
@@ -533,6 +535,7 @@ in  { VersionInfo
     , stackTest
     , stackCache
     , installNixActionStep
+    , nixBuildStep
     , hlintStep
     , hlintRequiredStep
     }
