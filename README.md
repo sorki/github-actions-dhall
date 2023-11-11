@@ -9,6 +9,14 @@ mainly on `haskell-ci.dhall`.
 `github-actions-dhall` is
 [self-hosting](https://github.com/sorki/github-actions-dhall/blob/main/self-ci.dhall).
 
+## Usage
+
+Copy [`ci.sh`](./ci.sh) and one of the `ci.dhall` from examples into your `.github/workflows/` directory.
+[example-defaultCi3/ci.dhall](./example-defaultCi3/ci.dhall) and
+[example-defaultCi/ci.dhall](./example-defaultCi/ci.dhall) are good starting points. Run `ci.sh`
+to generate `ci.yaml` by defaults - you might want to install `dhall-yaml` before
+or else the script will try to `cabal install` it.
+
 ## Example
 
 ### Haskell

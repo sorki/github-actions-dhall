@@ -33,7 +33,6 @@ jobs:
       run: |
         export PATH=$HOME/.cabal/bin:$PATH
         dhall-to-yaml-ng --file self-ci.dhall
-        dhall-to-yaml-ng --file ci.dhall
         dhall-to-yaml-ng --file example-combinators/ci.dhall
         dhall-to-yaml-ng --file example-defaultCi/ci.dhall
         dhall-to-yaml-ng --file example-defaultCi3/ci.dhall

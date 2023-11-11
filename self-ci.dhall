@@ -5,7 +5,6 @@ in    dhallCi.dhallSteps
         , dhallCi.checkDhall [ "haskell-ci.dhall", "self-ci.dhall" ]
         , dhallCi.checkDhallYaml
             [ "self-ci.dhall"
-            , "ci.dhall"
             , "example-combinators/ci.dhall"
             , "example-defaultCi/ci.dhall"
             , "example-defaultCi3/ci.dhall"
