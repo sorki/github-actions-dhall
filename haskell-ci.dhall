@@ -184,16 +184,32 @@ let DhallMatrix =
         { ghc = [ defaultGHC ], cabal = [ latestCabal ], os = [ OS.Ubuntu ] }
       }
 
+let Build =
+      { Type =
+          { runs-on : Text
+          , name : Text
+          , steps : List BuildStep
+          , strategy : Matrix
+          }
+      , default =
+        { runs-on = "\${{ matrix.os }}"
+        , name =
+            "GHC \${{ matrix.ghc }}, Cabal \${{ matrix.cabal }}, OS \${{ matrix.os }}"
+        , steps = [] : List BuildStep
+        }
+      }
+
 let CI =
       { Type =
           { name : Text
           , on : Triggers.Event.Type
-          , jobs :
-              { build :
-                  { runs-on : Text, steps : List BuildStep, strategy : Matrix }
-              }
+          , jobs : { build : Build.Type }
           }
-      , default = { name = "Haskell CI", on = Triggers.Event.default }
+      , default =
+        { name = "Haskell CI"
+        , on = Triggers.Event.default
+        , jobs.build = Build.default
+        }
       }
 
 let printEnv =
@@ -438,11 +454,7 @@ let generalCi =
       λ(mat : DhallMatrix.Type) →
           CI::{
           , jobs.build
-            =
-            { runs-on = "\${{ matrix.os }}"
-            , steps = stepsToList sts
-            , strategy = mkMatrix mat
-            }
+            = Build::{ steps = stepsToList sts, strategy = mkMatrix mat }
           }
         : CI.Type
 
@@ -454,6 +466,7 @@ let defaultCi3 =
       generalCi defaultCabalSteps DhallMatrix::{ ghc = defaultGHC3 } : CI.Type
 
 in  { VersionInfo
+    , Build
     , BuildStep
     , Steps
     , ExtraSteps
