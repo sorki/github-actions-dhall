@@ -247,7 +247,7 @@ let cache =
               dist-newstyle
               ''
           , key =
-              "\${{ matrix.os }}-\${{ matrix.ghc }}-cabal-\${{ hashFiles('cabal.project.freeze') }}"
+              "\${{ matrix.os }}-\${{ matrix.ghc }}-\${{ matrix.cabal}}-\${{ hashFiles('cabal.project.freeze') }}"
           , restoreKeys = None Text
           }
         }
