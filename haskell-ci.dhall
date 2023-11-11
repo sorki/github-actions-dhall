@@ -193,7 +193,12 @@ let DhallMatrix =
       , default = { ghc = [ defaultGHC ], cabal = [ latestCabal ] }
       }
 
-let Event = < push | release | pull_request >
+let Event =
+      < push
+      | release
+      | pull_request
+      | schedule : { schedule : List { cron : Text } }
+      >
 
 let CI =
       { Type =
@@ -208,7 +213,13 @@ let CI =
               }
           }
       , default =
-        { name = "Haskell CI", on = [ Event.push, Event.pull_request ] }
+        { name = "Haskell CI"
+        , on =
+          [ Event.push
+          , Event.pull_request
+          , Event.schedule { schedule = [ { cron = "@monthly" } ] }
+          ]
+        }
       }
 
 let printEnv =
