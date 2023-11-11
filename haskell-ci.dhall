@@ -300,56 +300,6 @@ let cabalDeps =
             "cabal build all --enable-tests --enable-benchmarks --only-dependencies"
         }
 
-let installNixActionStep =
-      BuildStep.Uses
-        { uses = "cachix/install-nix-action@v23"
-        , id = None Text
-        , `with` =
-              Some
-                [ Prelude.Map.keyText
-                    "nix_path"
-                    "nixpkgs=channel:nixos-unstable"
-                ]
-            : Optional (Prelude.Map.Type Text Text)
-        }
-
-let installCachixStep =
-      λ(accountName : Text) →
-        BuildStep.Uses
-          { uses = "cachix/cachix-action@v12"
-          , id = None Text
-          , `with` =
-                Some
-                  [ Prelude.Map.keyText "name" accountName
-                  , Prelude.Map.keyText
-                      "signingKey"
-                      "\${{ secrets.CACHIX_SIGNING_KEY }}"
-                  ]
-              : Optional (Prelude.Map.Type Text Text)
-          }
-
-let nixBuildStep = BuildStep.Name { name = "Build with Nix", run = "nix-build" }
-
-let hlintStep =
-      BuildStep.Name
-        { name = "Install and run hlint (optional)"
-        , run =
-            ''
-                cabal install hlint
-                hlint -g --no-exit-code
-            ''
-        }
-
-let hlintRequiredStep =
-      BuildStep.Name
-        { name = "Install and run hlint"
-        , run =
-            ''
-                cabal install hlint
-                hlint -g
-            ''
-        }
-
 let cmdWithFlags =
       λ(cmd : Text) →
       λ(subcommand : Text) →
@@ -465,6 +415,67 @@ let defaultCi = generalCi1 defaultCabalSteps : CI.Type
 let defaultCi3 =
       generalCi defaultCabalSteps DhallMatrix::{ ghc = defaultGHC3 } : CI.Type
 
+let installNixActionStep =
+      BuildStep.Uses
+        { uses = "cachix/install-nix-action@v23"
+        , id = None Text
+        , `with` =
+              Some
+                [ Prelude.Map.keyText
+                    "nix_path"
+                    "nixpkgs=channel:nixos-unstable"
+                ]
+            : Optional (Prelude.Map.Type Text Text)
+        }
+
+let installCachixStep =
+      λ(accountName : Text) →
+        BuildStep.Uses
+          { uses = "cachix/cachix-action@v12"
+          , id = None Text
+          , `with` =
+                Some
+                  [ Prelude.Map.keyText "name" accountName
+                  , Prelude.Map.keyText
+                      "signingKey"
+                      "\${{ secrets.CACHIX_SIGNING_KEY }}"
+                  ]
+              : Optional (Prelude.Map.Type Text Text)
+          }
+
+let nixBuildStep = BuildStep.Name { name = "Build with Nix", run = "nix-build" }
+
+let withNix =
+      λ(steps : Steps.Type) →
+        steps
+        with extraSteps.pre = steps.extraSteps.pre # [ installNixActionStep ]
+        with extraSteps.post = steps.extraSteps.post # [ nixBuildStep ]
+
+let hlintStep =
+      BuildStep.Name
+        { name = "Install and run hlint (optional)"
+        , run =
+            ''
+                cabal install hlint
+                hlint -g --no-exit-code
+            ''
+        }
+
+let hlintRequiredStep =
+      BuildStep.Name
+        { name = "Install and run hlint"
+        , run =
+            ''
+                cabal install hlint
+                hlint -g
+            ''
+        }
+
+let withHlint =
+      λ(steps : Steps.Type) →
+        steps
+        with extraSteps.post = steps.extraSteps.post # [ hlintStep ]
+
 in  { VersionInfo
     , Build
     , BuildStep
@@ -514,6 +525,8 @@ in  { VersionInfo
     , installCachixStep
     , installNixActionStep
     , nixBuildStep
+    , withNix
     , hlintStep
     , hlintRequiredStep
+    , withHlint
     }
