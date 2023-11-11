@@ -84,6 +84,32 @@ name: Haskell CI
 - pull_request
 ```
 
+### GHC Versions
+
+If the last released GHC version is for example `GHC981`,
+it is aliased to `latestGHC`.
+The next major release (in our case `GHC963`) is
+aliased to `defaultGHC`.
+The `defaultGHC3` is then a list of `defaultGHC` and two major releases
+before it - for our example that is `[ defaultGHC, GHC.GHC947, GHC.GHC928 ]`.
+
+This represents a reasonable maintenance policy of supporting three
+major releases, not including the `latestGHC` which is typically
+in flux until most of the ecosystem ports to it.
+
+### Variants
+
+#### `defaultCi`
+
+This is a simple build using `defaultGHC`, `latestCabal`, `Ubuntu` (which corresponds to `ubuntu-latest`)
+and no matrix.
+See [example-defaultCi/ci.dhall](./example-defaultCi/ci.dhall)
+
+#### `defaultCi3`
+
+This is a matrix build using `defaultGHC3`.
+See [example-defaultCi3/ci.dhall](./example-defaultCi3/ci.dhall)
+
 ### Customization
 
 #### `cabal.project.local.ci`
