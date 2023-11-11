@@ -6,8 +6,11 @@ in    dhallCi.dhallSteps
         , dhallCi.checkDhallYaml
             [ "self-ci.dhall"
             , "ci.dhall"
+            , "example-combinators/ci.dhall"
             , "example-defaultCi/ci.dhall"
             , "example-defaultCi3/ci.dhall"
+            , "example-extraSteps/ci.dhall"
+            , "example-readme/ci.dhall"
             ]
         ]
     : dhallCi.CI

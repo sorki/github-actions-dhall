@@ -449,7 +449,7 @@ let nixBuildStep = BuildStep.Name { name = "Build with Nix", run = "nix-build" }
 let withNix =
       λ(steps : Steps.Type) →
         steps
-        with extraSteps.pre = steps.extraSteps.pre # [ installNixActionStep ]
+        with extraSteps.pre = [ installNixActionStep ] # steps.extraSteps.pre
         with extraSteps.post = steps.extraSteps.post # [ nixBuildStep ]
 
 let hlintStep =
