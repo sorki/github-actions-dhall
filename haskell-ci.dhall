@@ -2,7 +2,8 @@ let Prelude =
       https://prelude.dhall-lang.org/v22.0.0/package.dhall
         sha256:1c7622fdc868fe3a23462df3e6f533e50fdc12ecf3b42c0bb45c328ec8c4293e
 
--- See https://github.com/haskell-actions/setup/blob/main/src/versions.json
+let Triggers = ./triggers.dhall
+
 let GHC =
       < GHC7103
       | GHC802
@@ -141,25 +142,12 @@ let latestCabal = Cabal.Cabal310
 let defaultGHC3 = [ defaultGHC, GHC.GHC947, GHC.GHC928 ]
 
 let VersionInfo =
-      { Type =
-          { ghc-version : Optional Text
-          , cabal-version : Optional Text
-          , stack-version : Optional Text
-          , enable-stack : Optional Bool
-          , stack-no-global : Optional Bool
-          , stack-setup-ghc : Optional Bool
-          }
+      { Type = { ghc-version : Optional Text, cabal-version : Optional Text }
       , default =
         { ghc-version = Some (printGhc defaultGHC)
-        , cabal-version = Some "3.10"
-        , stack-version = None Text
-        , enable-stack = Some False
-        , stack-no-global = None Bool
-        , stack-setup-ghc = None Bool
+        , cabal-version = Some (printCabal latestCabal)
         }
       }
-
-let PyInfo = { python-version : Text, architecture : Optional Text }
 
 let CacheCfg =
       { Type = { path : Text, key : Text, restoreKeys : Optional Text }
@@ -170,11 +158,16 @@ let BuildStep =
       < Uses :
           { uses : Text
           , id : Optional Text
+          , `with` : Optional (Prelude.Map.Type Text Text)
+          }
+      | UsesHaskellSetup :
+          { uses : Text
+          , id : Optional Text
           , `with` : Optional VersionInfo.Type
           }
       | Name : { name : Text, run : Text }
+      | NameIf : { name : Text, run : Text, `if` : Text }
       | UseCache : { uses : Text, `with` : CacheCfg.Type }
-      | UsePy : { uses : Text, `with` : PyInfo }
       | AwsEnv :
           { name : Text
           , run : Text
@@ -184,29 +177,40 @@ let BuildStep =
 
 let DhallVersion = { ghc-version : GHC, cabal-version : Cabal }
 
-let Matrix = { matrix : { ghc : List Text, cabal : List Text } }
+let Matrix = { matrix : { ghc : List Text, cabal : List Text, os : List Text } }
 
 let DhallMatrix =
-      { Type = { ghc : List GHC, cabal : List Cabal }
-      , default = { ghc = [ defaultGHC ], cabal = [ latestCabal ] }
+      { Type = { ghc : List GHC, cabal : List Cabal, os : List OS }
+      , default =
+        { ghc = [ defaultGHC ], cabal = [ latestCabal ], os = [ OS.Ubuntu ] }
       }
 
-let Event = < push | release | pull_request >
+let Build =
+      { Type =
+          { runs-on : Text
+          , name : Text
+          , steps : List BuildStep
+          , strategy : Matrix
+          }
+      , default =
+        { runs-on = "\${{ matrix.os }}"
+        , name =
+            "GHC \${{ matrix.ghc }}, Cabal \${{ matrix.cabal }}, OS \${{ matrix.os }}"
+        , steps = [] : List BuildStep
+        }
+      }
 
 let CI =
       { Type =
           { name : Text
-          , on : List Event
-          , jobs :
-              { build :
-                  { runs-on : Text
-                  , steps : List BuildStep
-                  , strategy : Optional Matrix
-                  }
-              }
+          , on : Triggers.Event.Type
+          , jobs : { build : Build.Type }
           }
       , default =
-        { name = "Haskell CI", on = [ Event.push, Event.pull_request ] }
+        { name = "Haskell CI"
+        , on = Triggers.Event.default
+        , jobs.build = Build.default
+        }
       }
 
 let printEnv =
@@ -220,6 +224,7 @@ let printMatrix =
       λ(v : DhallMatrix.Type) →
         { ghc = Prelude.List.map GHC Text printGhc v.ghc
         , cabal = Prelude.List.map Cabal Text printCabal v.cabal
+        , os = Prelude.List.map OS Text printOS v.os
         }
 
 let cache =
@@ -232,17 +237,7 @@ let cache =
               dist-newstyle
               ''
           , key =
-              "\${{ runner.os }}-\${{ matrix.ghc }}-cabal-\${{ hashFiles('cabal.project.freeze') }}"
-          , restoreKeys = None Text
-          }
-        }
-
-let stackCache =
-      BuildStep.UseCache
-        { uses = "actions/cache@v3"
-        , `with` =
-          { path = "~/.stack"
-          , key = "\${{ runner.os }}-\${{ matrix.ghc }}-stack"
+              "\${{ matrix.os }}-\${{ matrix.ghc }}-\${{ matrix.cabal}}-\${{ hashFiles('cabal.project.freeze') }}"
           , restoreKeys = None Text
           }
         }
@@ -251,12 +246,14 @@ let checkout =
       BuildStep.Uses
         { uses = "actions/checkout@v4"
         , id = None Text
-        , `with` = None VersionInfo.Type
+        , `with` =
+              Some [ Prelude.Map.keyText "submodules" "recursive" ]
+            : Optional (Prelude.Map.Type Text Text)
         }
 
 let haskellEnv =
       λ(v : VersionInfo.Type) →
-        BuildStep.Uses
+        BuildStep.UsesHaskellSetup
           { uses = "haskell-actions/setup@v2"
           , id = Some "setup-haskell-cabal"
           , `with` = Some v
@@ -268,23 +265,11 @@ let defaultEnv =
 let latestEnv =
       printEnv { ghc-version = latestGHC, cabal-version = latestCabal }
 
-let matrixOS = "\${{ matrix.operating-system }}"
-
 let matrixEnv =
       VersionInfo::{
       , ghc-version = Some "\${{ matrix.ghc }}"
       , cabal-version = Some "\${{ matrix.cabal }}"
       }
-
-let stackEnv =
-        { ghc-version = Some (printGhc defaultGHC)
-        , cabal-version = None Text
-        , stack-version = Some "latest"
-        , enable-stack = Some True
-        , stack-no-global = Some True
-        , stack-setup-ghc = None Bool
-        }
-      : VersionInfo.Type
 
 let mkMatrix = λ(st : DhallMatrix.Type) → { matrix = printMatrix st } : Matrix
 
@@ -292,8 +277,6 @@ let cabalUpdate =
       BuildStep.Name
         { name = "Update Hackage repository", run = "cabal update" }
 
--- use this eg. if you want to set specific flags or options like
--- `-Werror` only on ci, not in the local dev environment.
 let cabalProjectFile =
       BuildStep.Name
         { name = "cabal.project.local.ci"
@@ -336,28 +319,30 @@ let cabalBuildWithFlags = cabalWithFlags "build all"
 
 let cabalBuild = cabalBuildWithFlags [ "--enable-tests", "--enable-benchmarks" ]
 
-let stackWithFlags = cmdWithFlags "stack"
-
-let stackBuildWithFlags = stackWithFlags "build"
-
-let stackBuild =
-      stackBuildWithFlags
-        [ "--bench", "--test", "--no-run-tests", "--no-run-benchmarks" ]
-
 let cabalTest = cabalWithFlags "test all" ([ "--enable-tests" ] : List Text)
-
-let stackTest = stackWithFlags "test" ([] : List Text)
 
 let cabalTestProfiling = cabalWithFlags "test all" [ "--enable-profiling" ]
 
 let cabalTestCoverage = cabalWithFlags "test all" [ "--enable-coverage" ]
 
-let cabalDoc = cabalWithFlags "haddock" ([] : List Text)
+let cabalDoc = cabalWithFlags "haddock all" ([] : List Text)
+
+let ExtraSteps =
+      { Type =
+          { pre : List BuildStep
+          , postCheckout : List BuildStep
+          , post : List BuildStep
+          }
+      , default =
+        { pre = [] : List BuildStep
+        , postCheckout = [] : List BuildStep
+        , post = [] : List BuildStep
+        }
+      }
 
 let Steps =
       { Type =
-          { extraStepsPre : List BuildStep
-          , checkoutStep : BuildStep
+          { checkoutStep : BuildStep
           , haskellEnvStep : BuildStep
           , cabalUpdateStep : BuildStep
           , cabalProjectFileStep : Optional BuildStep
@@ -367,12 +352,11 @@ let Steps =
           , buildStep : BuildStep
           , testStep : Optional BuildStep
           , docStep : Optional BuildStep
-          , extraSteps : List BuildStep
+          , extraSteps : ExtraSteps.Type
           }
       , default =
-        { extraStepsPre = [] : List BuildStep
-        , checkoutStep = checkout
-        , haskellEnvStep = haskellEnv defaultEnv
+        { checkoutStep = checkout
+        , haskellEnvStep = haskellEnv matrixEnv
         , cabalUpdateStep = cabalUpdate
         , cabalProjectFileStep = None BuildStep
         , cabalFreezeStep = None BuildStep
@@ -381,7 +365,7 @@ let Steps =
         , buildStep = cabalBuild
         , testStep = None BuildStep
         , docStep = None BuildStep
-        , extraSteps = [] : List BuildStep
+        , extraSteps = ExtraSteps.default
         }
       }
 
@@ -394,22 +378,16 @@ let defaultCabalSteps =
       , docStep = Some cabalDoc
       }
 
-let defaultStackSteps =
-      Steps::{
-      , cacheStep = stackCache
-      , buildStep = stackBuild
-      , testStep = Some stackTest
-      }
-
 let stepsToList =
       λ(steps : Steps.Type) →
-            steps.extraStepsPre
+            steps.extraSteps.pre
+          # [ steps.checkoutStep ]
+          # steps.extraSteps.postCheckout
           # Prelude.List.filterMap
               (Optional BuildStep)
               BuildStep
               (λ(optStep : Optional BuildStep) → optStep)
-              [ Some steps.checkoutStep
-              , Some steps.haskellEnvStep
+              [ Some steps.haskellEnvStep
               , Some steps.cabalUpdateStep
               , steps.cabalProjectFileStep
               , steps.cabalFreezeStep
@@ -419,40 +397,91 @@ let stepsToList =
               , steps.testStep
               , steps.docStep
               ]
-          # steps.extraSteps
+          # steps.extraSteps.post
         : List BuildStep
-
-let matrixSteps =
-        (defaultCabalSteps with haskellEnvStep = haskellEnv matrixEnv)
-      : Steps.Type
 
 let generalCi =
       λ(sts : Steps.Type) →
-      λ(mat : Optional DhallMatrix.Type) →
+      λ(mat : DhallMatrix.Type) →
           CI::{
           , jobs.build
-            =
-            { runs-on = printOS OS.Ubuntu
-            , steps = stepsToList sts
-            , strategy =
-                Prelude.Optional.map DhallMatrix.Type Matrix mkMatrix mat
-            }
+            = Build::{ steps = stepsToList sts, strategy = mkMatrix mat }
           }
         : CI.Type
 
-let ciNoMatrix = λ(sts : Steps.Type) → generalCi sts (None DhallMatrix.Type)
+let generalCi1 = λ(sts : Steps.Type) → generalCi sts DhallMatrix.default
 
-let stackSteps =
-        [ checkout, haskellEnv stackEnv, stackCache, stackBuild, stackTest ]
-      : List BuildStep
+let defaultCi = generalCi1 defaultCabalSteps : CI.Type
 
-let defaultCi = generalCi defaultCabalSteps (None DhallMatrix.Type) : CI.Type
+let defaultCi3 =
+      generalCi defaultCabalSteps DhallMatrix::{ ghc = defaultGHC3 } : CI.Type
 
-let defaultCi3 = generalCi matrixSteps (Some { ghc = defaultGHC3, cabal = [ latestCabal ]}) : CI.Type
+let installNixActionStep =
+      BuildStep.Uses
+        { uses = "cachix/install-nix-action@v23"
+        , id = None Text
+        , `with` =
+              Some
+                [ Prelude.Map.keyText
+                    "nix_path"
+                    "nixpkgs=channel:nixos-unstable"
+                ]
+            : Optional (Prelude.Map.Type Text Text)
+        }
+
+let installCachixStep =
+      λ(accountName : Text) →
+        BuildStep.Uses
+          { uses = "cachix/cachix-action@v12"
+          , id = None Text
+          , `with` =
+                Some
+                  [ Prelude.Map.keyText "name" accountName
+                  , Prelude.Map.keyText
+                      "signingKey"
+                      "\${{ secrets.CACHIX_SIGNING_KEY }}"
+                  ]
+              : Optional (Prelude.Map.Type Text Text)
+          }
+
+let nixBuildStep = BuildStep.Name { name = "Build with Nix", run = "nix-build" }
+
+let withNix =
+      λ(steps : Steps.Type) →
+        steps
+        with extraSteps.pre = steps.extraSteps.pre # [ installNixActionStep ]
+        with extraSteps.post = steps.extraSteps.post # [ nixBuildStep ]
+
+let hlintStep =
+      BuildStep.Name
+        { name = "Install and run hlint (optional)"
+        , run =
+            ''
+                cabal install hlint
+                hlint -g --no-exit-code
+            ''
+        }
+
+let hlintRequiredStep =
+      BuildStep.Name
+        { name = "Install and run hlint"
+        , run =
+            ''
+                cabal install hlint
+                hlint -g
+            ''
+        }
+
+let withHlint =
+      λ(steps : Steps.Type) →
+        steps
+        with extraSteps.post = steps.extraSteps.post # [ hlintStep ]
 
 in  { VersionInfo
+    , Build
     , BuildStep
     , Steps
+    , ExtraSteps
     , Matrix
     , CI
     , GHC
@@ -461,8 +490,10 @@ in  { VersionInfo
     , DhallMatrix
     , CacheCfg
     , OS
-    , PyInfo
-    , Event
+    , Event = Triggers.Event
+    , Push = Triggers.Push
+    , PullRequest = Triggers.PullRequest
+    , Cron = Triggers.Cron
     , cabalDoc
     , cabalTest
     , cabalDeps
@@ -483,22 +514,20 @@ in  { VersionInfo
     , defaultCi
     , defaultCi3
     , generalCi
+    , generalCi1
     , mkMatrix
     , printMatrix
     , printEnv
     , printGhc
     , printCabal
     , printOS
-    , matrixOS
     , defaultCabalSteps
-    , defaultStackSteps
-    , matrixSteps
-    , ciNoMatrix
     , cache
-    , stackEnv
-    , stackWithFlags
-    , stackSteps
-    , stackBuild
-    , stackTest
-    , stackCache
+    , installCachixStep
+    , installNixActionStep
+    , nixBuildStep
+    , withNix
+    , hlintStep
+    , hlintRequiredStep
+    , withHlint
     }
