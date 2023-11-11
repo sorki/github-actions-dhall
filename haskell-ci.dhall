@@ -144,18 +144,10 @@ let VersionInfo =
       { Type =
           { ghc-version : Optional Text
           , cabal-version : Optional Text
-          , stack-version : Optional Text
-          , enable-stack : Optional Bool
-          , stack-no-global : Optional Bool
-          , stack-setup-ghc : Optional Bool
           }
       , default =
         { ghc-version = Some (printGhc defaultGHC)
         , cabal-version = Some "3.10"
-        , stack-version = None Text
-        , enable-stack = Some False
-        , stack-no-global = None Bool
-        , stack-setup-ghc = None Bool
         }
       }
 
@@ -252,16 +244,6 @@ let cache =
           }
         }
 
-let stackCache =
-      BuildStep.UseCache
-        { uses = "actions/cache@v3"
-        , `with` =
-          { path = "~/.stack"
-          , key = "\${{ matrix.os }}-\${{ matrix.ghc }}-stack"
-          , restoreKeys = None Text
-          }
-        }
-
 let checkout =
       BuildStep.Uses
         { uses = "actions/checkout@v4"
@@ -290,16 +272,6 @@ let matrixEnv =
       , ghc-version = Some "\${{ matrix.ghc }}"
       , cabal-version = Some "\${{ matrix.cabal }}"
       }
-
-let stackEnv =
-        { ghc-version = Some (printGhc defaultGHC)
-        , cabal-version = None Text
-        , stack-version = Some "latest"
-        , enable-stack = Some True
-        , stack-no-global = Some True
-        , stack-setup-ghc = None Bool
-        }
-      : VersionInfo.Type
 
 let mkMatrix = λ(st : DhallMatrix.Type) → { matrix = printMatrix st } : Matrix
 
@@ -401,17 +373,7 @@ let cabalBuildWithFlags = cabalWithFlags "build all"
 
 let cabalBuild = cabalBuildWithFlags [ "--enable-tests", "--enable-benchmarks" ]
 
-let stackWithFlags = cmdWithFlags "stack"
-
-let stackBuildWithFlags = stackWithFlags "build"
-
-let stackBuild =
-      stackBuildWithFlags
-        [ "--bench", "--test", "--no-run-tests", "--no-run-benchmarks" ]
-
 let cabalTest = cabalWithFlags "test all" ([ "--enable-tests" ] : List Text)
-
-let stackTest = stackWithFlags "test" ([] : List Text)
 
 let cabalTestProfiling = cabalWithFlags "test all" [ "--enable-profiling" ]
 
@@ -470,13 +432,6 @@ let defaultCabalSteps =
       , docStep = Some cabalDoc
       }
 
-let defaultStackSteps =
-      Steps::{
-      , cacheStep = stackCache
-      , buildStep = stackBuild
-      , testStep = Some stackTest
-      }
-
 let stepsToList =
       λ(steps : Steps.Type) →
             steps.extraSteps.pre
@@ -518,10 +473,6 @@ let generalCi =
         : CI.Type
 
 let ciNoMatrix = λ(sts : Steps.Type) → generalCi sts (None DhallMatrix.Type)
-
-let stackSteps =
-        [ checkout, haskellEnv stackEnv, stackCache, stackBuild, stackTest ]
-      : List BuildStep
 
 let defaultCi = generalCi defaultCabalSteps (None DhallMatrix.Type) : CI.Type
 
@@ -568,16 +519,9 @@ in  { VersionInfo
     , printCabal
     , printOS
     , defaultCabalSteps
-    , defaultStackSteps
     , matrixSteps
     , ciNoMatrix
     , cache
-    , stackEnv
-    , stackWithFlags
-    , stackSteps
-    , stackBuild
-    , stackTest
-    , stackCache
     , installCachixStep
     , installNixActionStep
     , nixBuildStep
