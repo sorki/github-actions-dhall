@@ -168,6 +168,11 @@ let BuildStep =
       < Uses :
           { uses : Text
           , id : Optional Text
+          , `with` : Optional (Prelude.Map.Type Text Text)
+          }
+      | UsesHaskellSetup :
+          { uses : Text
+          , id : Optional Text
           , `with` : Optional VersionInfo.Type
           }
       | Name : { name : Text, run : Text }
@@ -248,12 +253,14 @@ let checkout =
       BuildStep.Uses
         { uses = "actions/checkout@v4"
         , id = None Text
-        , `with` = None VersionInfo.Type
+        , `with` =
+              Some [ Prelude.Map.keyText "submodules" "recursive" ]
+            : Optional (Prelude.Map.Type Text Text)
         }
 
 let haskellEnv =
       λ(v : VersionInfo.Type) →
-        BuildStep.Uses
+        BuildStep.UsesHaskellSetup
           { uses = "haskell-actions/setup@v2"
           , id = Some "setup-haskell-cabal"
           , `with` = Some v
@@ -319,7 +326,13 @@ let installNixActionStep =
       BuildStep.Uses
         { uses = "cachix/install-nix-action@v23"
         , id = None Text
-        , `with` = None VersionInfo.Type
+        , `with` =
+              Some
+                [ Prelude.Map.keyText
+                    "nix_path"
+                    "nixpkgs=channel:nixos-unstable"
+                ]
+            : Optional (Prelude.Map.Type Text Text)
         }
 
 let nixBuildStep = BuildStep.Name { name = "Build with Nix", run = "nix-build" }
