@@ -2,6 +2,8 @@ let Prelude =
       https://prelude.dhall-lang.org/v22.0.0/package.dhall
         sha256:1c7622fdc868fe3a23462df3e6f533e50fdc12ecf3b42c0bb45c328ec8c4293e
 
+let Triggers = ./triggers.dhall
+
 -- See https://github.com/haskell-actions/setup/blob/main/src/versions.json
 let GHC =
       < GHC7103
@@ -183,30 +185,16 @@ let DhallMatrix =
         { ghc = [ defaultGHC ], cabal = [ latestCabal ], os = [ OS.Ubuntu ] }
       }
 
-let Event =
-      < push
-      | release
-      | pull_request
-      | schedule : { schedule : List { cron : Text } }
-      >
-
 let CI =
       { Type =
           { name : Text
-          , on : List Event
+          , on : Triggers.Event.Type
           , jobs :
               { build :
                   { runs-on : Text, steps : List BuildStep, strategy : Matrix }
               }
           }
-      , default =
-        { name = "Haskell CI"
-        , on =
-          [ Event.push
-          , Event.pull_request
-          , Event.schedule { schedule = [ { cron = "@monthly" } ] }
-          ]
-        }
+      , default = { name = "Haskell CI", on = Triggers.Event.default }
       }
 
 let printEnv =
@@ -478,7 +466,10 @@ in  { VersionInfo
     , DhallMatrix
     , CacheCfg
     , OS
-    , Event
+    , Event = Triggers.Event
+    , Push = Triggers.Push
+    , PullRequest = Triggers.PullRequest
+    , Cron = Triggers.Cron
     , cabalDoc
     , cabalTest
     , cabalDeps
