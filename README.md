@@ -154,13 +154,19 @@ package somepackage:
 ## Projects that use `github-actions-dhall`
 
 * [data-lens-light](https://github.com/UnkindPartition/data-lens-light)
+* [haskell-fio](https://github.com/sorki/haskell-fio/)
+* [floating-bits](https://github.com/julialongtin/floating-bits/)
 * [gcodehs](https://github.com/distrap/gcodehs/)
 * [Haskell-Nix-Derivation-Library](https://github.com/Gabriella439/Haskell-Nix-Derivation-Library/)
 * [haskell-project-template](https://github.com/sorki/haskell-project-template/)
+* [hnix-store](https://github.com/haskell-hnix/hnix-store/)
+* [hslice](https://github.com/HaskellThings/hslice/)
 * [ImplicitCAD](https://github.com/Haskell-Things/ImplicitCAD)
+* [implicitpipe](https://github.com/Haskell-Things/implicitpipe)
 * [nix-diff](https://github.com/Gabriella439/nix-diff)
 * [nix-narinfo](https://github.com/sorki/nix-narinfo/)
-* [ImplicitCAD](https://github.com/Haskell-Things/ImplicitCAD)
+* [ivory](https://github.com/distrap/ivory)
+* [tower](https://github.com/distrap/tower)
 
 ## Development
 
