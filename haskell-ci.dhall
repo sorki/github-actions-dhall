@@ -446,7 +446,12 @@ let installCachixStep =
               : Optional (Prelude.Map.Type Text Text)
           }
 
-let nixBuildStep = BuildStep.Name { name = "Build with Nix", run = "nix-build" }
+let nixBuildStep =
+      BuildStep.Name
+        { name = "Build with Nix"
+        , run =
+            "nix-build --argstr compiler \$(echo ghc\${{ matrix.ghc }} | tr -d '.')"
+        }
 
 let withNix =
       λ(steps : Steps.Type) →
