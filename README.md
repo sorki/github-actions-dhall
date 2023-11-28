@@ -155,6 +155,7 @@ package somepackage:
 
 * [data-lens-light](https://github.com/UnkindPartition/data-lens-light)
 * [haskell-fio](https://github.com/sorki/haskell-fio/)
+* [haskell-zre](https://github.com/sorki/haskell-zre/)
 * [floating-bits](https://github.com/julialongtin/floating-bits/)
 * [gcodehs](https://github.com/distrap/gcodehs/)
 * [Haskell-Nix-Derivation-Library](https://github.com/Gabriella439/Haskell-Nix-Derivation-Library/)
@@ -163,6 +164,7 @@ package somepackage:
 * [hslice](https://github.com/HaskellThings/hslice/)
 * [ImplicitCAD](https://github.com/Haskell-Things/ImplicitCAD)
 * [implicitpipe](https://github.com/Haskell-Things/implicitpipe)
+* [ircbridge](https://github.com/sorki/ircbridge/)
 * [nix-diff](https://github.com/Gabriella439/nix-diff)
 * [nix-narinfo](https://github.com/sorki/nix-narinfo/)
 * [ivory](https://github.com/distrap/ivory)
