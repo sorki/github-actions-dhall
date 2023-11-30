@@ -44,7 +44,7 @@ let Event =
           }
       , default =
         { push = Some Push.default
-        , pull_request = Some PullRequest.default
+        , pull_request = None PullRequest.Type
         , pull_request_target = None PullRequest.Type
         , schedule = Some [ Cron.default ]
         }
