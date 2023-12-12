@@ -385,10 +385,8 @@ let stepsToList =
             steps.extraSteps.pre
           # [ steps.checkoutStep ]
           # steps.extraSteps.postCheckout
-          # Prelude.List.filterMap
-              (Optional BuildStep)
+          # Prelude.List.unpackOptionals
               BuildStep
-              (λ(optStep : Optional BuildStep) → optStep)
               [ Some steps.haskellEnvStep
               , Some steps.cabalUpdateStep
               , steps.cabalProjectFileStep
