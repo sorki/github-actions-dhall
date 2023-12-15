@@ -165,6 +165,7 @@ package somepackage:
 * [hslice](https://github.com/HaskellThings/hslice/)
 * [ImplicitCAD](https://github.com/Haskell-Things/ImplicitCAD)
 * [implicitpipe](https://github.com/Haskell-Things/implicitpipe)
+* [ircbot](https://github.com/stepcut/ircbot/)
 * [ircbridge](https://github.com/sorki/ircbridge/)
 * [nix-diff](https://github.com/Gabriella439/nix-diff)
 * [nix-narinfo](https://github.com/sorki/nix-narinfo/)
