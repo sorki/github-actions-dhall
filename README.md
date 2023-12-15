@@ -154,12 +154,13 @@ package somepackage:
 ## Projects that use `github-actions-dhall`
 
 * [data-lens-light](https://github.com/UnkindPartition/data-lens-light)
-* [haskell-fio](https://github.com/sorki/haskell-fio/)
-* [haskell-zre](https://github.com/sorki/haskell-zre/)
 * [floating-bits](https://github.com/julialongtin/floating-bits/)
 * [gcodehs](https://github.com/distrap/gcodehs/)
+* [haskell-fio](https://github.com/sorki/haskell-fio/)
 * [Haskell-Nix-Derivation-Library](https://github.com/Gabriella439/Haskell-Nix-Derivation-Library/)
 * [haskell-project-template](https://github.com/sorki/haskell-project-template/)
+* [haskell-zre](https://github.com/sorki/haskell-zre/)
+* [hgdbmi](https://github.com/distrap/hgdbmi/)
 * [hnix-store](https://github.com/haskell-hnix/hnix-store/)
 * [hslice](https://github.com/HaskellThings/hslice/)
 * [ImplicitCAD](https://github.com/Haskell-Things/ImplicitCAD)
