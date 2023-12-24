@@ -154,6 +154,7 @@ package somepackage:
 ## Projects that use `github-actions-dhall`
 
 * [data-lens-light](https://github.com/UnkindPartition/data-lens-light)
+* [data-svd](https://github.com/DistRap/data-svd)
 * [floating-bits](https://github.com/julialongtin/floating-bits/)
 * [gcodehs](https://github.com/distrap/gcodehs/)
 * [haskell-fio](https://github.com/sorki/haskell-fio/)
