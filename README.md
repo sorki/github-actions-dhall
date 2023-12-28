@@ -155,6 +155,7 @@ package somepackage:
 
 * [data-lens-light](https://github.com/UnkindPartition/data-lens-light)
 * [data-svd](https://github.com/DistRap/data-svd)
+* [emhell](https://github.com/DistRap/emhell/)
 * [floating-bits](https://github.com/julialongtin/floating-bits/)
 * [gcodehs](https://github.com/distrap/gcodehs/)
 * [haskell-fio](https://github.com/sorki/haskell-fio/)
@@ -164,6 +165,7 @@ package somepackage:
 * [hgdbmi](https://github.com/distrap/hgdbmi/)
 * [hnix-store](https://github.com/haskell-hnix/hnix-store/)
 * [hslice](https://github.com/HaskellThings/hslice/)
+* [hocd](https://github.com/DistRap/hocd/)
 * [ImplicitCAD](https://github.com/Haskell-Things/ImplicitCAD)
 * [implicitpipe](https://github.com/Haskell-Things/implicitpipe)
 * [ircbot](https://github.com/stepcut/ircbot/)
