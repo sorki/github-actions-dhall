@@ -157,12 +157,12 @@ package somepackage:
 * [data-svd](https://github.com/DistRap/data-svd)
 * [emhell](https://github.com/DistRap/emhell/)
 * [floating-bits](https://github.com/julialongtin/floating-bits/)
-* [gcodehs](https://github.com/distrap/gcodehs/)
+* [gcodehs](https://github.com/DistRap/gcodehs/)
 * [haskell-fio](https://github.com/sorki/haskell-fio/)
 * [Haskell-Nix-Derivation-Library](https://github.com/Gabriella439/Haskell-Nix-Derivation-Library/)
 * [haskell-project-template](https://github.com/sorki/haskell-project-template/)
 * [haskell-zre](https://github.com/sorki/haskell-zre/)
-* [hgdbmi](https://github.com/distrap/hgdbmi/)
+* [hgdbmi](https://github.com/DistRap/hgdbmi/)
 * [hnix-store](https://github.com/haskell-hnix/hnix-store/)
 * [hslice](https://github.com/HaskellThings/hslice/)
 * [hocd](https://github.com/DistRap/hocd/)
@@ -172,8 +172,8 @@ package somepackage:
 * [ircbridge](https://github.com/sorki/ircbridge/)
 * [nix-diff](https://github.com/Gabriella439/nix-diff)
 * [nix-narinfo](https://github.com/sorki/nix-narinfo/)
-* [ivory](https://github.com/distrap/ivory)
-* [tower](https://github.com/distrap/tower)
+* [ivory](https://github.com/DistRap/ivory)
+* [tower](https://github.com/DistRap/tower)
 
 ## Development
 
