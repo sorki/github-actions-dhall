@@ -432,7 +432,7 @@ let installNixActionStep =
 let installCachixStep =
       λ(accountName : Text) →
         BuildStep.Uses
-          { uses = "cachix/cachix-action@v13"
+          { uses = "cachix/cachix-action@v14"
           , id = None Text
           , `with` =
                 Some
