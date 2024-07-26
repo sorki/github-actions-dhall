@@ -40,7 +40,12 @@ let GHC =
       | GHC961
       | GHC962
       | GHC963
+      | GHC964
+      | GHC965
+      | GHC966
       | GHC981
+      | GHC982
+      | GHC9101
       >
 
 let printGhc =
@@ -81,7 +86,12 @@ let printGhc =
           , GHC961 = "9.6.1"
           , GHC962 = "9.6.2"
           , GHC963 = "9.6.3"
+          , GHC964 = "9.6.4"
+          , GHC965 = "9.6.5"
+          , GHC966 = "9.6.6"
           , GHC981 = "9.8.1"
+          , GHC982 = "9.8.2"
+          , GHC9101 = "9.10.1"
           }
           ghc
 
