@@ -153,7 +153,7 @@ let latestGHC = GHC.GHC9101
 
 let latestCabal = Cabal.Cabal312
 
-let defaultGHC3 = [ defaultGHC, GHC.GHC948, GHC.GHC928 ]
+let defaultGHC3 = [ defaultGHC, GHC.GHC966, GHC.GHC948 ]
 
 let VersionInfo =
       { Type = { ghc-version : Optional Text, cabal-version : Optional Text }
