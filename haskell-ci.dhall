@@ -96,7 +96,8 @@ let printGhc =
           ghc
 
 let Cabal =
-      < Cabal310
+      < Cabal312
+      | Cabal310
       | Cabal38
       | Cabal36
       | Cabal34
@@ -110,7 +111,8 @@ let Cabal =
 let printCabal =
       λ(cabal : Cabal) →
         merge
-          { Cabal310 = "3.10"
+          { Cabal312 = "3.12"
+          , Cabal310 = "3.10"
           , Cabal38 = "3.8"
           , Cabal36 = "3.6"
           , Cabal34 = "3.4"
