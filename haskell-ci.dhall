@@ -243,7 +243,7 @@ let printMatrix =
 
 let cache =
       BuildStep.UseCache
-        { uses = "actions/cache@v3"
+        { uses = "actions/cache@v4"
         , `with` =
           { path =
               ''
