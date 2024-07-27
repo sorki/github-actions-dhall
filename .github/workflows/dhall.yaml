@@ -14,7 +14,7 @@ jobs:
         "ghc-version": "${{ matrix.ghc }}"
     - name: Update Hackage repository
       run: cabal update
-    - uses: "actions/cache@v3"
+    - uses: "actions/cache@v4"
       with:
         key: "${{ matrix.os }}-${{ matrix.ghc }}-${{ matrix.cabal}}-${{ hashFiles('cabal.project.freeze') }}"
         path: |
@@ -41,14 +41,12 @@ jobs:
     strategy:
       matrix:
         cabal:
-        - '3.10'
+        - '3.12'
         ghc:
-        - '9.6.3'
+        - '9.8.2'
         os:
         - "ubuntu-latest"
 name: Dhall CI
 'on':
   pull_request: {}
   push: {}
-  schedule:
-  - cron: "4 20 10 * *"
