@@ -30,13 +30,13 @@ in    haskellCi.generalCi
         haskellCi.defaultCabalSteps
           haskellCi.DhallMatrix::{
             { ghc =
-              [ haskellCi.GHC.GHC963
-              , haskellCi.GHC.GHC947
-              , haskellCi.GHC.GHC928
+              [ haskellCi.GHC.GHC982
+              , haskellCi.GHC.GHC966
+              , haskellCi.GHC.GHC948
               ]
             , cabal =
-              [ haskellCi.Cabal.Cabal310
-              , haskellCi.Cabal
+              [ haskellCi.Cabal.Cabal312
+              , haskellCi.Cabal.Cabal310
               ]
             , os =
               [ haskellCi.OS.Ubuntu
@@ -72,7 +72,7 @@ jobs:
         fi
     - name: freeze
       run: "cabal freeze --enable-tests --enable-benchmarks"
-    - uses: "actions/cache@v3"
+    - uses: "actions/cache@v4"
       with:
         key: "${{ matrix.os }}-${{ matrix.ghc }}-${{ matrix.cabal}}-${{ hashFiles('cabal.project.freeze') }}"
         path: |
@@ -84,17 +84,17 @@ jobs:
       run: "cabal build all --enable-tests --enable-benchmarks"
     - name: test all
       run: "cabal test all --enable-tests"
-    - name: haddock
-      run: cabal haddock
+    - name: haddock all
+      run: cabal haddock all
     strategy:
       matrix:
         cabal:
+        - '3.12'
         - '3.10'
-        - '3.2'
         ghc:
-        - '9.6.3'
-        - '9.4.7'
-        - '9.2.8'
+        - '9.8.2'
+        - '9.6.6'
+        - '9.4.8'
         os:
         - "ubuntu-latest"
         - "macos-latest"
@@ -102,8 +102,6 @@ name: Haskell CI
 'on':
   pull_request: {}
   push: {}
-  schedule:
-  - cron: "4 20 10 * *"
 ```
 
 ### GHC Versions

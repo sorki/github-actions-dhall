@@ -40,7 +40,12 @@ let GHC =
       | GHC961
       | GHC962
       | GHC963
+      | GHC964
+      | GHC965
+      | GHC966
       | GHC981
+      | GHC982
+      | GHC9101
       >
 
 let printGhc =
@@ -81,12 +86,18 @@ let printGhc =
           , GHC961 = "9.6.1"
           , GHC962 = "9.6.2"
           , GHC963 = "9.6.3"
+          , GHC964 = "9.6.4"
+          , GHC965 = "9.6.5"
+          , GHC966 = "9.6.6"
           , GHC981 = "9.8.1"
+          , GHC982 = "9.8.2"
+          , GHC9101 = "9.10.1"
           }
           ghc
 
 let Cabal =
-      < Cabal310
+      < Cabal312
+      | Cabal310
       | Cabal38
       | Cabal36
       | Cabal34
@@ -100,7 +111,8 @@ let Cabal =
 let printCabal =
       λ(cabal : Cabal) →
         merge
-          { Cabal310 = "3.10"
+          { Cabal312 = "3.12"
+          , Cabal310 = "3.10"
           , Cabal38 = "3.8"
           , Cabal36 = "3.6"
           , Cabal34 = "3.4"
@@ -114,11 +126,14 @@ let printCabal =
 
 let OS =
       < Ubuntu
+      | Ubuntu2404
       | Ubuntu2204
       | Ubuntu2004
       | Ubuntu1804
       | Ubuntu1604
       | MacOS
+      | MacOS14
+      | MacOS13
       | Windows
       >
 
@@ -127,21 +142,24 @@ let printOS =
         merge
           { Windows = "windows-latest"
           , Ubuntu = "ubuntu-latest"
+          , Ubuntu2404 = "ubuntu-24.04"
           , Ubuntu2204 = "ubuntu-22.04"
           , Ubuntu2004 = "ubuntu-20.04"
           , Ubuntu1804 = "ubuntu-18.04"
           , Ubuntu1604 = "ubuntu-16.04"
           , MacOS = "macos-latest"
+          , MacOS14 = "macos-14"
+          , MacOS13 = "macos-13"
           }
           os
 
-let defaultGHC = GHC.GHC963
+let defaultGHC = GHC.GHC982
 
-let latestGHC = GHC.GHC981
+let latestGHC = GHC.GHC9101
 
-let latestCabal = Cabal.Cabal310
+let latestCabal = Cabal.Cabal312
 
-let defaultGHC3 = [ defaultGHC, GHC.GHC948, GHC.GHC928 ]
+let defaultGHC3 = [ defaultGHC, GHC.GHC966, GHC.GHC948 ]
 
 let VersionInfo =
       { Type = { ghc-version : Optional Text, cabal-version : Optional Text }
@@ -231,7 +249,7 @@ let printMatrix =
 
 let cache =
       BuildStep.UseCache
-        { uses = "actions/cache@v3"
+        { uses = "actions/cache@v4"
         , `with` =
           { path =
               ''
@@ -418,7 +436,7 @@ let defaultCi3 =
 
 let installNixActionStep =
       BuildStep.Uses
-        { uses = "cachix/install-nix-action@v25"
+        { uses = "cachix/install-nix-action@v27"
         , id = None Text
         , `with` =
               Some
@@ -432,7 +450,7 @@ let installNixActionStep =
 let installCachixStep =
       λ(accountName : Text) →
         BuildStep.Uses
-          { uses = "cachix/cachix-action@v14"
+          { uses = "cachix/cachix-action@v15"
           , id = None Text
           , `with` =
                 Some
