@@ -43,7 +43,7 @@ jobs:
         cabal:
         - '3.12'
         ghc:
-        - '9.8.2'
+        - '9.6.6'
         os:
         - "ubuntu-latest"
 name: Dhall CI
