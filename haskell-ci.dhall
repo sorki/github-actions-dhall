@@ -1,6 +1,6 @@
 let Prelude =
-      https://prelude.dhall-lang.org/v22.0.0/package.dhall
-        sha256:1c7622fdc868fe3a23462df3e6f533e50fdc12ecf3b42c0bb45c328ec8c4293e
+      https://prelude.dhall-lang.org/v23.1.0/package.dhall
+        sha256:931cbfae9d746c4611b07633ab1e547637ab4ba138b16bf65ef1b9ad66a60b7f
 
 let Triggers = ./triggers.dhall
 
