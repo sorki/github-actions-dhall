@@ -442,7 +442,7 @@ let defaultCi3 =
 
 let installNixActionStep =
       BuildStep.Uses
-        { uses = "cachix/install-nix-action@v27"
+        { uses = "cachix/install-nix-action@v31"
         , id = None Text
         , `with` =
               Some
