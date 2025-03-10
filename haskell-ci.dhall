@@ -163,7 +163,7 @@ let defaultGHC = GHC.GHC984
 
 let latestGHC = GHC.GHC9121
 
-let latestCabal = Cabal.Cabal312
+let latestCabal = Cabal.Cabal314
 
 let defaultGHC3 = [ defaultGHC, GHC.GHC966, GHC.GHC948 ]
 
