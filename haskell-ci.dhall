@@ -161,7 +161,7 @@ let printOS =
 
 let defaultGHC = GHC.GHC984
 
-let latestGHC = GHC.GHC9101
+let latestGHC = GHC.GHC9121
 
 let latestCabal = Cabal.Cabal312
 
