@@ -1,6 +1,6 @@
 let Prelude =
-      https://prelude.dhall-lang.org/v22.0.0/package.dhall
-        sha256:1c7622fdc868fe3a23462df3e6f533e50fdc12ecf3b42c0bb45c328ec8c4293e
+      https://prelude.dhall-lang.org/v23.1.0/package.dhall
+        sha256:931cbfae9d746c4611b07633ab1e547637ab4ba138b16bf65ef1b9ad66a60b7f
 
 let Triggers = ./triggers.dhall
 
@@ -45,7 +45,9 @@ let GHC =
       | GHC966
       | GHC981
       | GHC982
+      | GHC984
       | GHC9101
+      | GHC9121
       >
 
 let printGhc =
@@ -91,12 +93,15 @@ let printGhc =
           , GHC966 = "9.6.6"
           , GHC981 = "9.8.1"
           , GHC982 = "9.8.2"
+          , GHC984 = "9.8.4"
           , GHC9101 = "9.10.1"
+          , GHC9121 = "9.12.1"
           }
           ghc
 
 let Cabal =
-      < Cabal312
+      < Cabal314
+      | Cabal312
       | Cabal310
       | Cabal38
       | Cabal36
@@ -111,7 +116,8 @@ let Cabal =
 let printCabal =
       λ(cabal : Cabal) →
         merge
-          { Cabal312 = "3.12"
+          { Cabal314 = "3.14"
+          , Cabal312 = "3.12"
           , Cabal310 = "3.10"
           , Cabal38 = "3.8"
           , Cabal36 = "3.6"
@@ -153,11 +159,11 @@ let printOS =
           }
           os
 
-let defaultGHC = GHC.GHC982
+let defaultGHC = GHC.GHC984
 
-let latestGHC = GHC.GHC9101
+let latestGHC = GHC.GHC9121
 
-let latestCabal = Cabal.Cabal312
+let latestCabal = Cabal.Cabal314
 
 let defaultGHC3 = [ defaultGHC, GHC.GHC966, GHC.GHC948 ]
 
@@ -436,7 +442,7 @@ let defaultCi3 =
 
 let installNixActionStep =
       BuildStep.Uses
-        { uses = "cachix/install-nix-action@v27"
+        { uses = "cachix/install-nix-action@v31"
         , id = None Text
         , `with` =
               Some
