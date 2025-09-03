@@ -47,7 +47,9 @@ let GHC =
       | GHC982
       | GHC984
       | GHC9101
+      | GHC9102
       | GHC9121
+      | GHC9122
       >
 
 let printGhc =
@@ -95,12 +97,15 @@ let printGhc =
           , GHC982 = "9.8.2"
           , GHC984 = "9.8.4"
           , GHC9101 = "9.10.1"
+          , GHC9102 = "9.10.2"
           , GHC9121 = "9.12.1"
+          , GHC9122 = "9.12.2"
           }
           ghc
 
 let Cabal =
-      < Cabal314
+      < Cabal316
+      | Cabal314
       | Cabal312
       | Cabal310
       | Cabal38
@@ -116,7 +121,8 @@ let Cabal =
 let printCabal =
       λ(cabal : Cabal) →
         merge
-          { Cabal314 = "3.14"
+          { Cabal316 = "3.16"
+          , Cabal314 = "3.14"
           , Cabal312 = "3.12"
           , Cabal310 = "3.10"
           , Cabal38 = "3.8"
@@ -161,9 +167,9 @@ let printOS =
 
 let defaultGHC = GHC.GHC984
 
-let latestGHC = GHC.GHC9121
+let latestGHC = GHC.GHC9122
 
-let latestCabal = Cabal.Cabal314
+let latestCabal = Cabal.Cabal316
 
 let defaultGHC3 = [ defaultGHC, GHC.GHC966, GHC.GHC948 ]
 
