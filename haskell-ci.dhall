@@ -528,6 +528,7 @@ in  { VersionInfo
     , Event = Triggers.Event
     , Push = Triggers.Push
     , PullRequest = Triggers.PullRequest
+    , MergeGroup = Triggers.MergeGroup
     , Cron = Triggers.Cron
     , cabalDoc
     , cabalTest

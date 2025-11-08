@@ -33,6 +33,9 @@ let PullRequest =
         }
       }
 
+-- TODO add any fields here (they are optional though)
+let MergeGroup = { Type = {}, default = {=} }
+
 let Cron = { Type = { cron : Text }, default.cron = "4 20 10 * *" }
 
 let Event =
@@ -40,14 +43,16 @@ let Event =
           { push : Optional Push.Type
           , pull_request : Optional PullRequest.Type
           , pull_request_target : Optional PullRequest.Type
+          , merge_group : Optional MergeGroup.Type
           , schedule : Optional (List Cron.Type)
           }
       , default =
         { push = Some Push.default
         , pull_request = Some PullRequest.default
         , pull_request_target = None PullRequest.Type
+        , merge_group = None MergeGroup.Type
         , schedule = None (List Cron.Type)
         }
       }
 
-in  { Push, PullRequest, Cron, Event }
+in  { Push, PullRequest, MergeGroup, Cron, Event }
