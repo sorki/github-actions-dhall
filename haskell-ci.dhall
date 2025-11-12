@@ -43,11 +43,13 @@ let GHC =
       | GHC964
       | GHC965
       | GHC966
+      | GHC967
       | GHC981
       | GHC982
       | GHC984
       | GHC9101
       | GHC9102
+      | GHC9103
       | GHC9121
       | GHC9122
       >
@@ -93,11 +95,13 @@ let printGhc =
           , GHC964 = "9.6.4"
           , GHC965 = "9.6.5"
           , GHC966 = "9.6.6"
+          , GHC967 = "9.6.7"
           , GHC981 = "9.8.1"
           , GHC982 = "9.8.2"
           , GHC984 = "9.8.4"
           , GHC9101 = "9.10.1"
           , GHC9102 = "9.10.2"
+          , GHC9103 = "9.10.3"
           , GHC9121 = "9.12.1"
           , GHC9122 = "9.12.2"
           }
@@ -171,7 +175,7 @@ let latestGHC = GHC.GHC9122
 
 let latestCabal = Cabal.Cabal316
 
-let defaultGHC3 = [ defaultGHC, GHC.GHC966, GHC.GHC948 ]
+let defaultGHC3 = [ defaultGHC, GHC.GHC967, GHC.GHC948 ]
 
 let VersionInfo =
       { Type = { ghc-version : Optional Text, cabal-version : Optional Text }
