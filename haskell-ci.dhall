@@ -275,7 +275,7 @@ let printMatrix =
 
 let cache =
       BuildStep.UseCache
-        { uses = "actions/cache@v4"
+        { uses = "actions/cache@v5"
         , `with` =
           { path =
               ''
@@ -290,7 +290,7 @@ let cache =
 
 let checkout =
       BuildStep.Uses
-        { uses = "actions/checkout@v4"
+        { uses = "actions/checkout@v7"
         , id = None Text
         , `with` =
               Some [ Prelude.Map.keyText "submodules" "recursive" ]
@@ -476,7 +476,7 @@ let installNixActionStep =
 let installCachixStep =
       λ(accountName : Text) →
         BuildStep.Uses
-          { uses = "cachix/cachix-action@v15"
+          { uses = "cachix/cachix-action@v17"
           , id = None Text
           , `with` =
                 Some
