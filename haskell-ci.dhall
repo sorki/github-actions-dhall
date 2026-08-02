@@ -179,13 +179,13 @@ let printOS =
           }
           os
 
-let defaultGHC = GHC.GHC984
+let defaultGHC = GHC.GHC9103
 
 let latestGHC = GHC.GHC9141
 
 let latestCabal = Cabal.Cabal316
 
-let defaultGHC3 = [ defaultGHC, GHC.GHC967, GHC.GHC948 ]
+let defaultGHC3 = [ defaultGHC, GHC.GHC984, GHC.GHC967 ]
 
 let VersionInfo =
       { Type = { ghc-version : Optional Text, cabal-version : Optional Text }
