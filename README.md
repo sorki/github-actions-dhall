@@ -30,13 +30,13 @@ in    haskellCi.generalCi
         haskellCi.defaultCabalSteps
           haskellCi.DhallMatrix::{
             { ghc =
-              [ haskellCi.GHC.GHC982
-              , haskellCi.GHC.GHC966
-              , haskellCi.GHC.GHC948
+              [ haskellCi.GHC.GHC9103
+              , haskellCi.GHC.GHC984
+              , haskellCi.GHC.GHC967
               ]
             , cabal =
-              [ haskellCi.Cabal.Cabal312
-              , haskellCi.Cabal.Cabal310
+              [ haskellCi.Cabal.Cabal316
+              , haskellCi.Cabal.Cabal314
               ]
             , os =
               [ haskellCi.OS.Ubuntu
@@ -55,7 +55,7 @@ jobs:
     name: "GHC ${{ matrix.ghc }}, Cabal ${{ matrix.cabal }}, OS ${{ matrix.os }}"
     "runs-on": "${{ matrix.os }}"
     steps:
-    - uses: "actions/checkout@v4"
+    - uses: "actions/checkout@v7"
       with:
         submodules: recursive
     - id: "setup-haskell-cabal"
@@ -72,7 +72,7 @@ jobs:
         fi
     - name: freeze
       run: "cabal freeze --enable-tests --enable-benchmarks"
-    - uses: "actions/cache@v4"
+    - uses: "actions/cache@v5"
       with:
         key: "${{ matrix.os }}-${{ matrix.ghc }}-${{ matrix.cabal}}-${{ hashFiles('cabal.project.freeze') }}"
         path: |
@@ -89,12 +89,12 @@ jobs:
     strategy:
       matrix:
         cabal:
-        - '3.12'
-        - '3.10'
+        - '3.16'
+        - '3.14'
         ghc:
-        - '9.8.2'
-        - '9.6.6'
-        - '9.4.8'
+        - '9.10.3'
+        - '9.8.4'
+        - '9.6.7'
         os:
         - "ubuntu-latest"
         - "macos-latest"
@@ -106,12 +106,12 @@ name: Haskell CI
 
 ### GHC Versions
 
-If the last released GHC version is for example `GHC981`,
+If the last released GHC version is for example `GHC9141`,
 it is aliased to `latestGHC`.
-The next major release (in our case `GHC963`) is
+The next major release (in our case `GHC9103`) is
 aliased to `defaultGHC`.
 The `defaultGHC3` is then a list of `defaultGHC` and two major releases
-before it - for our example that is `[ defaultGHC, GHC.GHC947, GHC.GHC928 ]`.
+before it - for our example that is `[ defaultGHC, GHC.GHC984, GHC.GHC967 ]`.
 
 This represents a reasonable maintenance policy of supporting three
 major releases, not including the `latestGHC` which is typically
