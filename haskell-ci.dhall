@@ -146,12 +146,15 @@ let printCabal =
 
 let OS =
       < Ubuntu
+      | Ubuntu2604
       | Ubuntu2404
       | Ubuntu2204
       | Ubuntu2004
       | Ubuntu1804
       | Ubuntu1604
       | MacOS
+      | MacOS26
+      | MacOS15
       | MacOS14
       | MacOS13
       | Windows
@@ -162,12 +165,15 @@ let printOS =
         merge
           { Windows = "windows-latest"
           , Ubuntu = "ubuntu-latest"
+          , Ubuntu2604 = "ubuntu-26.04"
           , Ubuntu2404 = "ubuntu-24.04"
           , Ubuntu2204 = "ubuntu-22.04"
           , Ubuntu2004 = "ubuntu-20.04"
           , Ubuntu1804 = "ubuntu-18.04"
           , Ubuntu1604 = "ubuntu-16.04"
           , MacOS = "macos-latest"
+          , MacOS26 = "macos-26"
+          , MacOS15 = "macos-15"
           , MacOS14 = "macos-14"
           , MacOS13 = "macos-13"
           }
