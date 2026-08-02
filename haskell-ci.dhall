@@ -52,6 +52,8 @@ let GHC =
       | GHC9103
       | GHC9121
       | GHC9122
+      | GHC9124
+      | GHC9141
       >
 
 let printGhc =
@@ -104,6 +106,8 @@ let printGhc =
           , GHC9103 = "9.10.3"
           , GHC9121 = "9.12.1"
           , GHC9122 = "9.12.2"
+          , GHC9124 = "9.12.4"
+          , GHC9141 = "9.14.1"
           }
           ghc
 
@@ -171,7 +175,7 @@ let printOS =
 
 let defaultGHC = GHC.GHC984
 
-let latestGHC = GHC.GHC9122
+let latestGHC = GHC.GHC9141
 
 let latestCabal = Cabal.Cabal316
 
