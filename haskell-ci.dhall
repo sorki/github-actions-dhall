@@ -52,6 +52,8 @@ let GHC =
       | GHC9103
       | GHC9121
       | GHC9122
+      | GHC9124
+      | GHC9141
       >
 
 let printGhc =
@@ -104,6 +106,8 @@ let printGhc =
           , GHC9103 = "9.10.3"
           , GHC9121 = "9.12.1"
           , GHC9122 = "9.12.2"
+          , GHC9124 = "9.12.4"
+          , GHC9141 = "9.14.1"
           }
           ghc
 
@@ -142,12 +146,15 @@ let printCabal =
 
 let OS =
       < Ubuntu
+      | Ubuntu2604
       | Ubuntu2404
       | Ubuntu2204
       | Ubuntu2004
       | Ubuntu1804
       | Ubuntu1604
       | MacOS
+      | MacOS26
+      | MacOS15
       | MacOS14
       | MacOS13
       | Windows
@@ -158,24 +165,27 @@ let printOS =
         merge
           { Windows = "windows-latest"
           , Ubuntu = "ubuntu-latest"
+          , Ubuntu2604 = "ubuntu-26.04"
           , Ubuntu2404 = "ubuntu-24.04"
           , Ubuntu2204 = "ubuntu-22.04"
           , Ubuntu2004 = "ubuntu-20.04"
           , Ubuntu1804 = "ubuntu-18.04"
           , Ubuntu1604 = "ubuntu-16.04"
           , MacOS = "macos-latest"
+          , MacOS26 = "macos-26"
+          , MacOS15 = "macos-15"
           , MacOS14 = "macos-14"
           , MacOS13 = "macos-13"
           }
           os
 
-let defaultGHC = GHC.GHC984
+let defaultGHC = GHC.GHC9103
 
-let latestGHC = GHC.GHC9122
+let latestGHC = GHC.GHC9141
 
 let latestCabal = Cabal.Cabal316
 
-let defaultGHC3 = [ defaultGHC, GHC.GHC967, GHC.GHC948 ]
+let defaultGHC3 = [ defaultGHC, GHC.GHC984, GHC.GHC967 ]
 
 let VersionInfo =
       { Type = { ghc-version : Optional Text, cabal-version : Optional Text }
@@ -265,7 +275,7 @@ let printMatrix =
 
 let cache =
       BuildStep.UseCache
-        { uses = "actions/cache@v4"
+        { uses = "actions/cache@v5"
         , `with` =
           { path =
               ''
@@ -280,7 +290,7 @@ let cache =
 
 let checkout =
       BuildStep.Uses
-        { uses = "actions/checkout@v4"
+        { uses = "actions/checkout@v7"
         , id = None Text
         , `with` =
               Some [ Prelude.Map.keyText "submodules" "recursive" ]
@@ -466,7 +476,7 @@ let installNixActionStep =
 let installCachixStep =
       λ(accountName : Text) →
         BuildStep.Uses
-          { uses = "cachix/cachix-action@v15"
+          { uses = "cachix/cachix-action@v17"
           , id = None Text
           , `with` =
                 Some

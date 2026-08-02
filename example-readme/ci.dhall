@@ -5,8 +5,8 @@ in    haskellCi.generalCi
         haskellCi.defaultCabalSteps
         haskellCi.DhallMatrix::{
         , ghc =
-          [ haskellCi.GHC.GHC982, haskellCi.GHC.GHC966, haskellCi.GHC.GHC948 ]
-        , cabal = [ haskellCi.Cabal.Cabal312, haskellCi.Cabal.Cabal310 ]
+          [ haskellCi.GHC.GHC9103, haskellCi.GHC.GHC984, haskellCi.GHC.GHC967 ]
+        , cabal = [ haskellCi.Cabal.Cabal316, haskellCi.Cabal.Cabal314 ]
         , os = [ haskellCi.OS.Ubuntu, haskellCi.OS.MacOS ]
         }
     : haskellCi.CI.Type
