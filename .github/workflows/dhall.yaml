@@ -20,6 +20,7 @@ jobs:
         path: |
           ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
           dist-newstyle
+        "restore-keys": "${{ matrix.os }}-${{ matrix.ghc }}-${{ matrix.cabal}}-"
     - name: Install dhall
       run: cabal install dhall
     - name: "Install dhall-to-yaml &c."
