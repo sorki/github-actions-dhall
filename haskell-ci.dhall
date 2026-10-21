@@ -196,8 +196,8 @@ let VersionInfo =
       }
 
 let CacheCfg =
-      { Type = { path : Text, key : Text, restoreKeys : Optional Text }
-      , default.restoreKeys = None Text
+      { Type = { path : Text, key : Text, restore-keys : Optional Text }
+      , default.restore-keys = None Text
       }
 
 let BuildStep =
@@ -284,7 +284,8 @@ let cache =
               ''
           , key =
               "\${{ matrix.os }}-\${{ matrix.ghc }}-\${{ matrix.cabal}}-\${{ hashFiles('cabal.project.freeze') }}"
-          , restoreKeys = None Text
+          , restore-keys = Some
+              "\${{ matrix.os }}-\${{ matrix.ghc }}-\${{ matrix.cabal}}-"
           }
         }
 
