@@ -507,7 +507,7 @@ let hlintStep =
         { name = "Install and run hlint (optional)"
         , run =
             ''
-                cabal install hlint
+                cabal install --ignore-project hlint
                 hlint -g --no-exit-code
             ''
         }
@@ -517,7 +517,7 @@ let hlintRequiredStep =
         { name = "Install and run hlint"
         , run =
             ''
-                cabal install hlint
+                cabal install --ignore-project hlint
                 hlint -g
             ''
         }
